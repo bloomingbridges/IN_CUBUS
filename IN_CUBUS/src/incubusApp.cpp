@@ -2,14 +2,15 @@
 
 //--------------------------------------------------------------
 void incubusApp::setup(){
-    mask.allocate(320,180,OF_IMAGE_COLOR_ALPHA);
+    mask.allocate(320,180,OF_IMAGE_COLOR);
     int i = 0;
     for( i=0; i < mask.getPixelsRef().size(); i++) {
-        mask.getPixelsRef()[i]   = (int) 107;
-        //mask.getPixelsRef()[i+1] = (int) 84;
-        //mask.getPixelsRef()[i+2] = (int) 47;
+//        mask.getPixelsRef().setColor(ofRandom(320), ofRandom(180), ofColor(107, 84, 47));
+//        mask.getPixelsRef()[i+1] = (int) 84;
+//        mask.getPixelsRef()[i+2] = (int) 47;
 //        mask.getPixelsRef()[i+3] = (int) ofRandom(255);
     }
+    mask.update();
     ofSetVerticalSync(true);
     debug = true;
     if (debug) ofSetFrameRate(12);
@@ -29,12 +30,17 @@ void incubusApp::draw(){
         float factor = (debug) ? 4.5 : 6.0;
         ofScale(factor, factor);
     }
-    mask.update();
-    mask.draw(0, 0);
-    //ofSetColor(107,84,47);
-	//ofRect(ofRandom(320),ofRandom(180),2,2);
-    //ofRect(ofRandom(320),ofRandom(180),2,2);
-    //ofRect(ofRandom(320),ofRandom(180),2,2);
+    
+    ofNoFill();
+    //ofSetColor(255, 255, 255);
+    ofBox(160, 90, 100, 120);
+    ofFill();
+    
+    //mask.draw(0, 0);
+    ofSetColor(107,84,47);
+	ofRect(ofRandom(320),ofRandom(180),2,2);
+    ofRect(ofRandom(320),ofRandom(180),2,2);
+    ofRect(ofRandom(320),ofRandom(180),2,2);
     ofSetColor(171,243,172);
     ofRect(159, 89, 4, 4);
     ofPopMatrix();
