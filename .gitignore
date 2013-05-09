@@ -1,13 +1,5 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
+.DS_Store
+.Trashes
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
+IN_CUBUS/build
+xcuserdata
