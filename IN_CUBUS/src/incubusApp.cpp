@@ -2,8 +2,17 @@
 
 //--------------------------------------------------------------
 void incubusApp::setup(){
+    mask.allocate(320,180,OF_IMAGE_COLOR_ALPHA);
+    int i = 0;
+    for( i=0; i < mask.getPixelsRef().size(); i++) {
+        mask.getPixelsRef()[i]   = (int) 107;
+        //mask.getPixelsRef()[i+1] = (int) 84;
+        //mask.getPixelsRef()[i+2] = (int) 47;
+//        mask.getPixelsRef()[i+3] = (int) ofRandom(255);
+    }
     ofSetVerticalSync(true);
-    debug = false;
+    debug = true;
+    if (debug) ofSetFrameRate(12);
 }
 
 //--------------------------------------------------------------
@@ -16,13 +25,18 @@ void incubusApp::draw(){
     ofBackground(244,239,252);
     
     ofPushMatrix();
-    ofScale(4.5, 4.5);
-    ofSetColor(107,84,47);
-	ofRect(ofRandom(320),ofRandom(180),3,3);
-    ofRect(ofRandom(320),ofRandom(180),3,3);
-    ofRect(ofRandom(320),ofRandom(180),3,3);
+    if (ofGetWindowMode() == OF_FULLSCREEN) {
+        float factor = (debug) ? 4.5 : 6.0;
+        ofScale(factor, factor);
+    }
+    mask.update();
+    mask.draw(0, 0);
+    //ofSetColor(107,84,47);
+	//ofRect(ofRandom(320),ofRandom(180),2,2);
+    //ofRect(ofRandom(320),ofRandom(180),2,2);
+    //ofRect(ofRandom(320),ofRandom(180),2,2);
     ofSetColor(171,243,172);
-    ofRect(154, 84, 9, 9);
+    ofRect(159, 89, 4, 4);
     ofPopMatrix();
     
     if (debug) {
@@ -45,6 +59,9 @@ void incubusApp::keyPressed(int key){
 void incubusApp::keyReleased(int key){
     if (key == 'd') {
         debug = !debug;
+    }
+    else if (key == 'f') {
+        ofToggleFullscreen();
     }
 }
 

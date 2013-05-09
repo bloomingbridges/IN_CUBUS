@@ -21,5 +21,6 @@ class incubusApp : public ofBaseApp{
     
     private:
         bool debug;
+        ofImage mask;
 		
 };
