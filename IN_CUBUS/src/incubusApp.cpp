@@ -2,18 +2,19 @@
 
 //--------------------------------------------------------------
 void incubusApp::setup(){
-    mask.allocate(320,180,OF_IMAGE_COLOR);
+    mask.allocate(320,180,OF_IMAGE_COLOR_ALPHA);
     int i = 0;
-    for( i=0; i < mask.getPixelsRef().size(); i++) {
-//        mask.getPixelsRef().setColor(ofRandom(320), ofRandom(180), ofColor(107, 84, 47));
-//        mask.getPixelsRef()[i+1] = (int) 84;
-//        mask.getPixelsRef()[i+2] = (int) 47;
-//        mask.getPixelsRef()[i+3] = (int) ofRandom(255);
+    for( i=0; i < mask.getPixelsRef().size(); i+=4) {
+        mask.getPixelsRef()[i]   = (unsigned char) 47;
+        mask.getPixelsRef()[i+1] = (unsigned char) 84;
+        mask.getPixelsRef()[i+2] = (unsigned char) 107;
+        mask.getPixelsRef()[i+3] = (unsigned char) 255;
     }
     mask.update();
     ofSetVerticalSync(true);
+    ofEnableAlphaBlending();
     debug = true;
-    if (debug) ofSetFrameRate(12);
+    //if (debug) ofSetFrameRate(12);
 }
 
 //--------------------------------------------------------------
@@ -31,18 +32,24 @@ void incubusApp::draw(){
         ofScale(factor, factor);
     }
     
-    ofNoFill();
-    //ofSetColor(255, 255, 255);
+    //ofNoFill();
     ofBox(160, 90, 100, 120);
-    ofFill();
+    //ofFill();
     
-    //mask.draw(0, 0);
-    ofSetColor(107,84,47);
-	ofRect(ofRandom(320),ofRandom(180),2,2);
-    ofRect(ofRandom(320),ofRandom(180),2,2);
-    ofRect(ofRandom(320),ofRandom(180),2,2);
+    
+    int p = (int) ofRandom(57600);
+    //cout << p << endl;
+    mask.getPixelsRef()[p*4+3] = (unsigned char) 0;
+    mask.update();
+    
+    if (!unmasked) {
+        ofSetMinMagFilters(GL_NEAREST, GL_NEAREST); 
+        mask.draw(0, 0);
+    }
+    
     ofSetColor(171,243,172);
     ofRect(159, 89, 4, 4);
+    
     ofPopMatrix();
     
     if (debug) {
@@ -68,6 +75,9 @@ void incubusApp::keyReleased(int key){
     }
     else if (key == 'f') {
         ofToggleFullscreen();
+    }
+    else if (key == 'm') {
+        unmasked = !unmasked;
     }
 }
 
