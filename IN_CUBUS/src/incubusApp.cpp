@@ -5,15 +5,15 @@ void incubusApp::setup(){
     mask.allocate(320,180,OF_IMAGE_COLOR_ALPHA);
     int i = 0;
     for( i=0; i < mask.getPixelsRef().size(); i+=4) {
-        mask.getPixelsRef()[i]   = (unsigned char) 47;
-        mask.getPixelsRef()[i+1] = (unsigned char) 84;
-        mask.getPixelsRef()[i+2] = (unsigned char) 107;
+        mask.getPixelsRef()[i]   = (unsigned char) ofRandom(47);
+        mask.getPixelsRef()[i+1] = (unsigned char) ofRandom(84);
+        mask.getPixelsRef()[i+2] = (unsigned char) ofRandom(107);
         mask.getPixelsRef()[i+3] = (unsigned char) 255;
     }
     mask.update();
     ofSetVerticalSync(true);
-    ofEnableAlphaBlending();
     debug = true;
+    degrees = 0;
     //if (debug) ofSetFrameRate(12);
 }
 
@@ -32,10 +32,15 @@ void incubusApp::draw(){
         ofScale(factor, factor);
     }
     
-    //ofNoFill();
-    ofBox(160, 90, 100, 120);
-    //ofFill();
-    
+    degrees++;
+    ofPushMatrix();
+    ofNoFill();
+    ofSetColor(127);
+    ofTranslate(160, 90);
+    ofRotateY((float) degrees);
+    ofBox(0, 0, 0, 100);
+    ofFill();
+    ofPopMatrix();
     
     int p = (int) ofRandom(57600);
     //cout << p << endl;
@@ -43,8 +48,10 @@ void incubusApp::draw(){
     mask.update();
     
     if (!unmasked) {
-        ofSetMinMagFilters(GL_NEAREST, GL_NEAREST); 
+        ofSetMinMagFilters(GL_NEAREST, GL_NEAREST);
+        ofEnableAlphaBlending();
         mask.draw(0, 0);
+        ofDisableAlphaBlending();
     }
     
     ofSetColor(171,243,172);

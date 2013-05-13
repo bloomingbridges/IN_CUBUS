@@ -23,5 +23,6 @@ class incubusApp : public ofBaseApp{
         bool debug;
         bool unmasked;
         ofImage mask;
+        int degrees;
 		
 };
