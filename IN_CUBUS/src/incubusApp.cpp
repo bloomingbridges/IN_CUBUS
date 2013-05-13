@@ -15,6 +15,12 @@ void incubusApp::setup(){
     debug = true;
     degrees = 0;
     //if (debug) ofSetFrameRate(12);
+    
+    //create the socket and set to send to 127.0.0.1:11999
+	udpConnection.Create();
+	udpConnection.Connect("127.0.0.1", 41234);
+	udpConnection.SetNonBlocking(true);
+    
 }
 
 //--------------------------------------------------------------
@@ -85,6 +91,10 @@ void incubusApp::keyReleased(int key){
     }
     else if (key == 'm') {
         unmasked = !unmasked;
+    }
+    else if (key == '.') {
+        string msg = "BLARGH";
+        udpConnection.Send(msg.c_str(),msg.length());
     }
 }
 

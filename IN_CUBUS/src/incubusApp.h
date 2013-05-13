@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxNetwork.h"
 
 class incubusApp : public ofBaseApp{
 
@@ -24,5 +25,6 @@ class incubusApp : public ofBaseApp{
         bool unmasked;
         ofImage mask;
         int degrees;
+        ofxUDPManager udpConnection;
 		
 };
