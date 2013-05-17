@@ -3,4 +3,7 @@
 
 IN_CUBUS/build
 IN_CUBUS/bin
+IN_COMING
 xcuserdata
+
+node_modules
