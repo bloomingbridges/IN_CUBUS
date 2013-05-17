@@ -16,7 +16,7 @@ watchr.watch({
         error: function(err){
             console.log('Watchr ERROR: ', err);
         },
-        change: function(changeType,filePath,fileCurrentStat,filePreviousStat){
+        change: function(changeType, filePath, currentStat, previousStat){
             if (changeType === "create" || changeType === "update") {
             	var index = filePath.match(/([0-360])/)[1];
             	console.log("FRESH [" + index + "]");

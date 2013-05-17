@@ -11,9 +11,18 @@ void incubusApp::setup(){
         mask.getPixelsRef()[i+3] = (unsigned char) 255;
     }
     mask.update();
+    
+    //ofSetSmoothLighting(true);
+    lightSource.enable();
+    lightSource.setPointLight();
+    lightSource.setPosition(160, 90, -10);
+    lightSource.setAttenuation();
+    ofSetGlobalAmbientColor(ofFloatColor(127,127,127));
+                                
     ofSetVerticalSync(true);
     debug = true;
     degrees = 0;
+    cameraRotation = 0.0;
     //if (debug) ofSetFrameRate(12);
     
     //create the socket and set to send to 127.0.0.1:11999
@@ -32,20 +41,32 @@ void incubusApp::update(){
 void incubusApp::draw(){
     ofBackground(244,239,252);
     
+    cameraRotation += 0.2;
+    if ((int) cameraRotation == degrees + 1) {
+        degrees++;
+        if (degrees > 359) {
+            degrees = 0;
+            cameraRotation = 0.0;
+        }
+        cout << degrees << endl;
+    }
+    
     ofPushMatrix();
     if (ofGetWindowMode() == OF_FULLSCREEN) {
         float factor = (debug) ? 4.5 : 6.0;
         ofScale(factor, factor);
     }
     
-    degrees++;
     ofPushMatrix();
     ofNoFill();
-    ofSetColor(127);
+    ofSetLineWidth(1);
+    ofSetColor(222,216,226);
     ofTranslate(160, 90);
     ofRotateY((float) degrees);
-    ofBox(0, 0, 0, 100);
     ofFill();
+    //lightSource.enable();
+    ofBox(0, 0, 0, 100);
+    //lightSource.disable();
     ofPopMatrix();
     
     int p = (int) ofRandom(57600);
@@ -60,8 +81,8 @@ void incubusApp::draw(){
         ofDisableAlphaBlending();
     }
     
-    ofSetColor(171,243,172);
-    ofRect(159, 89, 4, 4);
+    //ofSetColor(171,243,172);
+    //ofRect(159, 89, 4, 4);
     
     ofPopMatrix();
     

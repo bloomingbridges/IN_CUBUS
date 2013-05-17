@@ -25,6 +25,9 @@ class incubusApp : public ofBaseApp{
         bool unmasked;
         ofImage mask;
         int degrees;
+        ofEasyCam camera;
+        float cameraRotation;
+        ofLight lightSource;
         ofxUDPManager udpConnection;
 		
 };
