@@ -20,11 +20,12 @@ class incubusApp : public ofBaseApp{
         bool unmasked;
         bool recording;
         int firstFrame;
+        int degrees;
+        float cameraRotation;
         ofImage snapshot;
         ofImage mask;
-        int degrees;
+        ofFbo fbo;
         ofEasyCam camera;
-        float cameraRotation;
         ofLight lightSource;
         ofxUDPManager udpConnection;
 		

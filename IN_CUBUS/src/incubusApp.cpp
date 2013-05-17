@@ -2,6 +2,9 @@
 
 //--------------------------------------------------------------
 void incubusApp::setup(){
+    
+    fbo.allocate(320, 180);
+    
     mask.allocate(320,180,OF_IMAGE_COLOR_ALPHA);
     int i = 0;
     for( i=0; i < mask.getPixelsRef().size(); i+=4) {
@@ -22,7 +25,7 @@ void incubusApp::setup(){
     debug = true;
     degrees = 0;
     cameraRotation = 0.0;
-    //if (debug) ofSetFrameRate(12);
+    if (debug) ofSetFrameRate(30);
     
     //create the socket and set to send to 127.0.0.1:11999
 	udpConnection.Create();
@@ -34,12 +37,6 @@ void incubusApp::setup(){
 //--------------------------------------------------------------
 void incubusApp::update(){
 
-}
-
-//--------------------------------------------------------------
-void incubusApp::draw(){
-    ofBackground(244,239,252);
-    
     cameraRotation += 1;
     if (abs(cameraRotation) == degrees + 1) {
         degrees++;
@@ -49,11 +46,14 @@ void incubusApp::draw(){
         }
     }
     
-    ofPushMatrix();
-    if (ofGetWindowMode() == OF_FULLSCREEN) {
-        float factor = (debug) ? 4.5 : 6.0;
-        ofScale(factor, factor);
-    }
+}
+
+//--------------------------------------------------------------
+void incubusApp::draw(){
+    
+    fbo.begin();
+    
+    ofBackground(244,239,252);
     
     ofPushMatrix();
     ofNoFill();
@@ -67,8 +67,11 @@ void incubusApp::draw(){
     //lightSource.disable();
     ofPopMatrix();
     
+    fbo.end();
+    
     if (recording) {
-        snapshot.grabScreen(0,0,320,180);
+        //snapshot.grabScreen(0,0,320,180);
+        fbo.readToPixels(snapshot.getPixelsRef());
         snapshot.saveImage("../../../IN_COMING/" + ofToString(degrees) + ".png");
         //cout << "Capturing.." << endl;
         if (degrees == firstFrame) {
@@ -77,13 +80,20 @@ void incubusApp::draw(){
         }
     }
     
+    ofPushMatrix();
+    if (ofGetWindowMode() == OF_FULLSCREEN) {
+        float factor = (debug) ? 4.5 : 6.0;
+        ofScale(factor, factor);
+    }
+    
+    ofSetMinMagFilters(GL_NEAREST, GL_NEAREST);
+    fbo.draw(0.f, 0.f);
+    
     int p = (int) ofRandom(57600);
-    //cout << p << endl;
     mask.getPixelsRef()[p*4+3] = (unsigned char) 0;
     mask.update();
     
     if (!unmasked) {
-        ofSetMinMagFilters(GL_NEAREST, GL_NEAREST);
         ofEnableAlphaBlending();
         mask.draw(0, 0);
         ofDisableAlphaBlending();
