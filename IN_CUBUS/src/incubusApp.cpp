@@ -12,11 +12,10 @@ void incubusApp::setup(){
     }
     mask.update();
     
-    //ofSetSmoothLighting(true);
+    ofSetSmoothLighting(true);
     lightSource.enable();
     lightSource.setPointLight();
     lightSource.setPosition(160, 90, -10);
-    lightSource.setAttenuation();
     ofSetGlobalAmbientColor(ofFloatColor(127,127,127));
                                 
     ofSetVerticalSync(true);
@@ -41,14 +40,13 @@ void incubusApp::update(){
 void incubusApp::draw(){
     ofBackground(244,239,252);
     
-    cameraRotation += 0.2;
-    if ((int) cameraRotation == degrees + 1) {
+    cameraRotation += 1;
+    if (abs(cameraRotation) == degrees + 1) {
         degrees++;
         if (degrees > 359) {
             degrees = 0;
             cameraRotation = 0.0;
         }
-        cout << degrees << endl;
     }
     
     ofPushMatrix();
@@ -68,6 +66,16 @@ void incubusApp::draw(){
     ofBox(0, 0, 0, 100);
     //lightSource.disable();
     ofPopMatrix();
+    
+    if (recording) {
+        snapshot.grabScreen(0,0,320,180);
+        snapshot.saveImage("../../../IN_COMING/" + ofToString(degrees) + ".png");
+        //cout << "Capturing.." << endl;
+        if (degrees == firstFrame) {
+            recording = false;
+            cout << "RECORDING STOP" << endl;
+        }
+    }
     
     int p = (int) ofRandom(57600);
     //cout << p << endl;
@@ -92,7 +100,10 @@ void incubusApp::draw(){
         ofSetColor(180,181,255);
         ofRect(0,810,1440,12);
         ofSetColor(112,74,158);
-        ofDrawBitmapString("HELLO, IN//CUBUS!", 40, 866);
+        string debugLabel = "DEBUG";
+        debugLabel += " // DEGREES: " + ofToString(cameraRotation);
+        debugLabel += (recording) ? " // CAPTURING" : "";
+        ofDrawBitmapString(debugLabel , 40, 866);
     }
     
 }
@@ -117,26 +128,13 @@ void incubusApp::keyReleased(int key){
         string msg = "BLARGH";
         udpConnection.Send(msg.c_str(),msg.length());
     }
-}
-
-//--------------------------------------------------------------
-void incubusApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void incubusApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void incubusApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void incubusApp::mouseReleased(int x, int y, int button){
-
+    else if (key == 'r') {
+        cout << "RECORDING START (" + ofToString(degrees) + ")" << endl;
+        firstFrame = degrees - 1;
+        if (firstFrame < 0)
+            firstFrame = 359;
+        recording = true;
+    }
 }
 
 //--------------------------------------------------------------
@@ -146,10 +144,5 @@ void incubusApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void incubusApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void incubusApp::dragEvent(ofDragInfo dragInfo){ 
 
 }

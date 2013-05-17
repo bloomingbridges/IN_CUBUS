@@ -17,9 +17,9 @@ watchr.watch({
             console.log('Watchr ERROR: ', err);
         },
         change: function(changeType, filePath, currentStat, previousStat){
-            if (changeType === "create" || changeType === "update") {
-            	var index = filePath.match(/([0-360])/)[1];
-            	console.log("FRESH [" + index + "]");
+            if (/*changeType === "create" || */changeType === "update") {
+            	var index = filePath.substring(13,filePath.length-4);
+            	console.log("UPDATED [" + filePath + "][" + index + "]");
             }
             //console.log('CHANGE: ', arguments);
         }
@@ -35,8 +35,7 @@ udp.on("message", function (msg, rinfo) {
 
 udp.on("listening", function () {
   var address = udp.address();
-  console.log("server listening " +
-      address.address + ":" + address.port);
+  console.log("\n### TRANS//CUBUS is churning on " + address.port + "\n");
 });
 
 udp.bind(41234);
