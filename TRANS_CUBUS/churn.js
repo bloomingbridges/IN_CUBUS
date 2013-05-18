@@ -19,7 +19,7 @@ watchr.watch({
         change: function(changeType, filePath, currentStat, previousStat){
             if (/*changeType === "create" || */changeType === "update") {
             	var index = filePath.substring(13,filePath.length-4);
-            	console.log("UPDATED [" + filePath + "][" + index + "]");
+            	console.log("UPDATED [" + index + '] "' + filePath + '"');
             }
             //console.log('CHANGE: ', arguments);
         }
