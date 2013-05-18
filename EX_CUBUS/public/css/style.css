@@ -1,0 +1,30 @@
+
+body { 
+	color: #A3D9D8; 
+	font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif; 
+	background: #292929; 
+	margin: 0;
+	padding: 0;
+}
+
+a:link, a:visited {
+	color: #B7EDDB;
+}
+
+a:hover, a:active {
+	color: #C4FFDD;
+}
+
+#container {
+	max-width: 700px;
+	margin: 12px auto;
+}
+
+#pixel {
+	width: 700px;
+	height: 700px;
+	display: block;
+	background-color: #A3D9D8;
+	border: 12px solid #403D36;
+	-webkit-transition: 0.3s background-color linear;
+}
