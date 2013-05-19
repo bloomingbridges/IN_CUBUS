@@ -1,8 +1,12 @@
 
-var express = require('express'),
-	fs = require('fs');
+var fs = require('fs'), 
+	express = require('express'),
+	http = require('http'),
+	mongoose = require('mongoose');
+	io = require('socket.io');
 
 var app = express(),
+	server = http.createServer(app),
 	credentials = {};
 
 fs.readFile(__dirname + '/credentials.json', 'utf8', function(error, data) {
@@ -30,7 +34,7 @@ function setupExpressApp() {
 	});
 
 	var port = (process.env.PORT) ? process.env.PORT : 3000;
-
+	io.listen(server);
 	app.listen(port);
 
 }
