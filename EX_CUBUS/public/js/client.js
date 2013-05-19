@@ -1,9 +1,10 @@
 
 var pixel
-	, pixelValues = ["#A3D9D8", "#D8D9A3", "#FF0000"]
+	, pixelValues = ["#A3D9D8"]
 	, index = 0
 	, timer
-	, socket;
+	, socket
+	, spazz = false;
 
 $(document).ready(function() {
 	pixel = $('#pixel');
@@ -29,31 +30,44 @@ function startPlayback() {
 
 function updatePixel() {
 	index++;
-	if (index === pixelValues.length)
+	if (index >= pixelValues.length)
 		index = 0;
-	$(pixel).css('background-color', pixelValues[index]);
+	var p = pixelValues[index];
+	var colour = (typeof p === 'object') ? 'rgb(' + p.r + ',' + p.g + ',' + p.b + ')' : p;
+	$(pixel).css('background-color', colour);
 }
 
 function setupSocket() {
 	
-	console.log("Connecting to localhost:"+port);
+	//console.log("Connecting to localhost:"+port);
 	socket = new WebSocket('ws://localhost:'+port+'/');
-	console.log(socket);
 
 	socket.onopen = function() {
-		console.log("YOPEN");
+		console.log("Connection established!");
+		//pixelValues = [{r:"255",g:"0",b:"255"}];
+		//index = 0;
 	};
 
 	socket.onmessage = function(message) {
-		console.log("YO "+message);
+		var data = JSON.parse(message.data);
+		pixelValues = data.pixels;
+		$('#info').html("You have been allocated ( X: " + data.position.x + " | Y: " + data.position.y + " )");
+		$('#info').append(' <a href="#">info</a> <a href="#">increase</a>');
 	};
 
 	socket.onclose = function() {
-		console.log("BYE");
+		setPixelToSpazz();
 	};
 
 	socket.onerror = function(error) {
-		console.log(error);
+		setPixelToSpazz();
 	}
 
+}
+
+function setPixelToSpazz() {
+	pixelValues = ["#A3D9D8", "#D8D9A3", "#FF0000"];
+	spazz = true;
+	index = 0;
+	$('#info').html("Connection lost..");
 }

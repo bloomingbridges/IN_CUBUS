@@ -101,6 +101,21 @@ function setupSockets() {
 // Sockets /////////////////////////////////////////////////////////////////////
 
 function onConnection(client) {
+
   console.log("NEW CONNECTION!");
-  console.log(client);
+  var pixelArray = grabPixelArrayForPosition(0);
+  var data = {position: {x: 1, y: 1}, pixels: pixelArray};
+  client.send(JSON.stringify(data));
+
+  client.on('message', function(message) {
+
+  });
+}
+
+function grabPixelArrayForPosition(position) {
+	var array = [];
+	for (var i = 0; i < 359; i++) {
+		array.push({r:255, g:0, b:127});
+	}
+	return array;
 }
