@@ -8,6 +8,12 @@ var fs = require('fs')
 	, ws = require('websocket.io');
 
 
+// Models //////////////////////////////////////////////////////////////////////
+
+var User = require('./models.js').User
+	, Pixel = require('./models.js').Pixel
+
+
 // Globals /////////////////////////////////////////////////////////////////////
 
 var app = express()
@@ -16,22 +22,6 @@ var app = express()
 	, socket
 	, db;
 
-
-// Schemata ////////////////////////////////////////////////////////////////////
-
-var userSchema = mongoose.Schema({
-	id: String,
-	position: Number,
-	authenticated: Boolean,
-});
-
-var pixelSchema = mongoose.Schema({
-	position: Number,
-	step: Number,
-	r: Number,
-	g: Number,
-	b: Number
-});
 
 // Setup ///////////////////////////////////////////////////////////////////////
 
@@ -115,7 +105,8 @@ function onConnection(client) {
 function grabPixelArrayForPosition(position) {
 	var array = [];
 	for (var i = 0; i < 359; i++) {
-		array.push({r:255, g:0, b:127});
+		array.push({r:128, g:121, b:107});
 	}
 	return array;
 }
+
