@@ -5,7 +5,7 @@ var fs = require('fs')
 	, express = require('express')
 	, http = require('http')
 	, mongoose = require('mongoose')
-	, io = require('socket.io');
+	, ws = require('websocket.io');
 
 
 // Globals /////////////////////////////////////////////////////////////////////
@@ -13,8 +13,25 @@ var fs = require('fs')
 var app = express()
 	, server = http.createServer(app)
 	, credentials = {}
+	, socket
 	, db;
 
+
+// Schemata ////////////////////////////////////////////////////////////////////
+
+var userSchema = mongoose.Schema({
+	id: String,
+	position: Number,
+	authenticated: Boolean,
+});
+
+var pixelSchema = mongoose.Schema({
+	position: Number,
+	step: Number,
+	r: Number,
+	g: Number,
+	b: Number
+});
 
 // Setup ///////////////////////////////////////////////////////////////////////
 
@@ -30,6 +47,7 @@ fs.readFile(__dirname + '/credentials.json', 'utf8', function(error, data) {
 function init() {
 	establishDatabaseConnection();
 	setupExpressApp();
+	setupSockets();
 }
 
 function establishDatabaseConnection() {
@@ -51,6 +69,8 @@ function establishDatabaseConnection() {
 
 function setupExpressApp() {
 
+	app.set('port', process.env.PORT || 3000);
+
 	app.set('title', 'IN//CUBUS');
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
@@ -61,19 +81,26 @@ function setupExpressApp() {
 
 	app.get('/', function(req,res) {
 		res.render('index',
-				{ title: app.get('title') }
+				{ title: app.get('title'),
+					port: app.get('port') }
 			);
 	});
 
-	var port = (process.env.PORT) ? process.env.PORT : 3000;
-	io.listen(server);
-	app.listen(port);
+	server.listen(app.get('port'), function(){
+	  console.log("Express server listening on port " + app.get('port'));
+	});
 
+}
+
+function setupSockets() {
+	socket = ws.attach(server);
+	socket.on('connection', onConnection);
 }
 
 
 // Sockets /////////////////////////////////////////////////////////////////////
 
-io.sockets.on('connection', function (socket) {
+function onConnection(client) {
   console.log("NEW CONNECTION!");
-});
+  console.log(client);
+}
