@@ -20,6 +20,7 @@ var udp = dgram.createSocket('udp4')
   , credentials = {}
   , churning = false
   , queue = []
+  , churn = []
   , counter = 0
   , timer
   , db;
@@ -66,86 +67,60 @@ watchr.watch({
       if (/*changeType === "create" || */changeType === "update") {
       	var index = filePath.substring(13,filePath.length-4);
       	console.log("UPDATED [" + index + '] "' + filePath + '"');
-        startChurning();
+        if (queue.indexOf(index) === -1) {
+          queue.push(index);
+          if (!churning)
+            startChurning();
+        }
       }
     }
 	}
 });
 
 function startChurning() {
-  if (!churning && counter === 360) {
+  if (!churning) {
+    churning = true;
     setTimeout(function() {
-      //timer = setInterval(churn, 100);
       loadImages();
-      churning = true;
-    }, 3000);
+    }, 15000);
   } 
-  else if (churning) {
-    if (queue.length > 0)
-      console.log("chrng.. " + queue.shift().step);
-  } else {
-    counter++;
-  }
 }
 
 function loadImages() {
-  var filesHandled = 0;
-  for (var i=0; i<359; i++) {
-    var source = '../IN_COMING/' + i + '.png';
-    console.log("chrnnn.. " + source);
-    var imgdata = fs.readFileSync(source);
-
-    var cnvs = new canvas(320,180)
-      , ctx = cnvs.getContext('2d')
-      , img = new canvas.Image;
-    
-    img.onload = function() {
-      ctx.drawImage(img, 0, 0);
-      queue.push({step: i, data: cnvs});
-      // var imgData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
-      // //console.log('[' + index + '] (1,1): ' + imgData.data[0] + ', ' + imgData.data[1] + ', ' + imgData.data[2]);
-      // console.log(Math.ceil(i/360 * 100) + "%");
-      // filesHandled++;
-      // if (filesHandled === 360) {
-      //   churning = false;
-      //   console.log("DONE CHURNING!");
-      // }
-      delete imgdata;
-    }
-
-    img.src = imgdata;
+  while (queue.length > 0) {
+    var index = queue.shift();
+    var source = '../IN_COMING/' + index + '.png';
+    churn.push({step: index, data: fs.readFileSync(source)});
   }
-  
+  timer = setInterval(checkForJobs, 1000);
 }
 
-// function churn() {
-//   if (queue.length > 0) {
-//     var index = queue.shift();
-//     var source = '../IN_COMING/' + index + '.png';
-//     console.log("chrnnn.. " + source);
-//     fs.readFile(source, function(err, imgdata) {
-//       if (err) throw err;
-//       var cnvs = new canvas(320,180)
-//         , ctx = cnvs.getContext('2d')
-//         , img = new canvas.Image;
-      
-//       img.onload = function() {
-//         ctx.drawImage(img, 0, 0);
-//         var imgData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
-//         //console.log('[' + index + '] (1,1): ' + imgData.data[0] + ', ' + imgData.data[1] + ', ' + imgData.data[2]);
-//         console.log(Math.ceil(index/360 * 100) + "%");
-//       }
+function checkForJobs() {
+  if (churn.length > 0)
+      spawnWorker(churn.shift());
+  else {
+    churning = false;
+    clearInterval(timer);
+    console.log("DONE CHURNING!");
+  }
+}
 
-//       img.src = imgdata;
+function spawnWorker(job) {
+  if (queue.indexOf(job.step) === -1)
+    console.log("PROCESSING [" + job.step + "]");
+}
 
-//     });
-//   }
-//   else {
-//     churning = false;
-//     clearInterval(timer);
-//     console.log("DONE CHURNING!");
-//   }
-// }
+  // var cnvs = new canvas(320,180)
+  //   , ctx = cnvs.getContext('2d')
+  //   , img = new canvas.Image;
+
+  // img.onload = function() {
+  //   ctx.drawImage(img, 0, 0);
+  //   var imgData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
+  //   //console.log('[' + index + '] (1,1): ' + imgData.data[0] + ', ' + imgData.data[1] + ', ' + imgData.data[2]);
+  // }
+
+  // img.src = imgdata;
 
 
 // UDP /////////////////////////////////////////////////////////////////////////
