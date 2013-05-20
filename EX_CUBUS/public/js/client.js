@@ -39,8 +39,10 @@ function updatePixel() {
 
 function setupSocket() {
 	
-	//console.log("Connecting to localhost:"+port);
-	socket = new WebSocket('ws://localhost:'+port+'/');
+	if (port === 3000)
+		socket = new WebSocket('ws://localhost:3000');
+	else
+		socket = new WebSocket('ws://incubus-7783.onmodulus.net/');
 
 	socket.onopen = function() {
 		console.log("Connection established!");

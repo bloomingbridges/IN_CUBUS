@@ -44,8 +44,7 @@ function establishDatabaseConnection() {
 
 	var auth = credentials.db.USER + ':' + credentials.db.PWD + '@';
 	var address = credentials.db.URL + credentials.db.NAME
-	mongoose.connect('mongodb://' + auth + address);
-	db = mongoose.connection;
+	db = mongoose.createConnection('mongodb://' + auth + address);
 
 	// Mongoose Handlers /////////////////////////////////////////////////////////
 
