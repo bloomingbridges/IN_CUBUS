@@ -6,14 +6,7 @@ void incubusApp::setup(){
     fbo.allocate(320, 180);
     
     mask.allocate(320,180,OF_IMAGE_COLOR_ALPHA);
-    int i = 0;
-    for( i=0; i < mask.getPixelsRef().size(); i+=4) {
-        mask.getPixelsRef()[i]   = (unsigned char) ofRandom(47);
-        mask.getPixelsRef()[i+1] = (unsigned char) ofRandom(84);
-        mask.getPixelsRef()[i+2] = (unsigned char) ofRandom(107);
-        mask.getPixelsRef()[i+3] = (unsigned char) 255;
-    }
-    mask.update();
+    resetMask(false);
     
     ofSetSmoothLighting(true);
     lightSource.enable();
@@ -155,4 +148,16 @@ void incubusApp::windowResized(int w, int h){
 //--------------------------------------------------------------
 void incubusApp::gotMessage(ofMessage msg){
 
+}
+
+//--------------------------------------------------------------
+void incubusApp::resetMask(bool noisy){
+    int i = 0;
+    for( i=0; i < mask.getPixelsRef().size(); i+=4) {
+        mask.getPixelsRef()[i]   = (unsigned char) (noisy) ? ofRandom(47) : 47;
+        mask.getPixelsRef()[i+1] = (unsigned char) (noisy) ? ofRandom(84) : 84;
+        mask.getPixelsRef()[i+2] = (unsigned char) (noisy) ? ofRandom(107) : 107;
+        mask.getPixelsRef()[i+3] = (unsigned char) 255;
+    }
+    mask.update();
 }

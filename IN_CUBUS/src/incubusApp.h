@@ -15,6 +15,8 @@ class incubusApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void gotMessage(ofMessage msg);
     
+        void resetMask(bool noisy);
+    
     private:
         bool debug;
         bool unmasked;

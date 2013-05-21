@@ -5,7 +5,8 @@ var fs = require('fs')
   , dgram = require('dgram')
   ,	watchr = require('watchr')
   , canvas = require('canvas')
-  , mongoose = require('mongoose');
+  , mongoose = require('mongoose')
+  , BinaryClient = require('binaryjs').BinaryClient;
 
 
 // Models //////////////////////////////////////////////////////////////////////
@@ -22,7 +23,10 @@ var udp = dgram.createSocket('udp4')
   , queue = []
   , churn = []
   , counter = 0
+  , workers = 0
   , timer
+  , bClient
+  , readyToStream
   , db;
 
 
@@ -32,7 +36,8 @@ var filePath = __dirname + '/../EX_CUBUS/credentials.json';
 fs.readFile(filePath, 'utf8', function(error, data) {
   if (!error) {
     credentials = JSON.parse(data);
-    establishDatabaseConnection();
+    //establishDatabaseConnection();
+    setupStream();
   }
   else
     console.log(error);
@@ -52,6 +57,17 @@ function establishDatabaseConnection() {
     console.log("Connection to DB establishd!");
   });
 
+}
+
+function setupStream() {
+  bClient = new BinaryClient('ws://incubus-7783.onmodulus.net:3000/upstream');
+  bClient.on('open', function() {
+    readyToStream = true;
+    console.log("SUCK MY STREAM!");
+  });
+  bClient.on('error', function(error) {
+    console.log(error);
+  });
 }
 
 
@@ -92,12 +108,16 @@ function loadImages() {
     var source = '../IN_COMING/' + index + '.png';
     churn.push({step: index, data: fs.readFileSync(source)});
   }
-  timer = setInterval(checkForJobs, 1000);
+  timer = setInterval(checkForJobs, 10);
 }
 
 function checkForJobs() {
-  if (churn.length > 0)
-      spawnWorker(churn.shift());
+  if (churn.length > 0) {
+     if (workers < 10) {
+        spawnWorker(churn.shift());
+        workers++;
+      }
+  }
   else {
     churning = false;
     clearInterval(timer);
@@ -108,19 +128,15 @@ function checkForJobs() {
 function spawnWorker(job) {
   if (queue.indexOf(job.step) === -1)
     console.log("PROCESSING [" + job.step + "]");
+  var cnvs = new canvas(320,180)
+    , ctx = cnvs.getContext('2d')
+    , img = new canvas.Image;
+  img.src = job.data;
+  ctx.drawImage(img, 0, 0);
+  var imgData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
+  console.log('[' + job.step + '] (1,1): ' + imgData.data[0] + ', ' + imgData.data[1] + ', ' + imgData.data[2]);
+  workers--;
 }
-
-  // var cnvs = new canvas(320,180)
-  //   , ctx = cnvs.getContext('2d')
-  //   , img = new canvas.Image;
-
-  // img.onload = function() {
-  //   ctx.drawImage(img, 0, 0);
-  //   var imgData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
-  //   //console.log('[' + index + '] (1,1): ' + imgData.data[0] + ', ' + imgData.data[1] + ', ' + imgData.data[2]);
-  // }
-
-  // img.src = imgdata;
 
 
 // UDP /////////////////////////////////////////////////////////////////////////

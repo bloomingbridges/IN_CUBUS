@@ -5,7 +5,8 @@ var fs = require('fs')
 	, express = require('express')
 	, http = require('http')
 	, mongoose = require('mongoose')
-	, ws = require('websocket.io');
+	, ws = require('websocket.io')
+	, BinaryServer = require('binaryjs').BinaryServer;
 
 
 // Models //////////////////////////////////////////////////////////////////////
@@ -20,6 +21,7 @@ var app = express()
 	, server = http.createServer(app)
 	, credentials = {}
 	, socket
+	, bServer
 	, db;
 
 
@@ -38,6 +40,7 @@ function init() {
 	establishDatabaseConnection();
 	setupExpressApp();
 	setupSockets();
+	setupBinaryServer();
 }
 
 function establishDatabaseConnection() {
@@ -86,19 +89,34 @@ function setupSockets() {
 	socket.on('connection', onConnection);
 }
 
+function setupBinaryServer() {
+	bServer = new BinaryServer({server:server})
+	bServer.on('connection', function(client) {
+		client.on('error', function(error) {
+			console.log(error.stack, error.message);
+		});
+	});
+}
 
 // Sockets /////////////////////////////////////////////////////////////////////
 
 function onConnection(client) {
 
-  console.log("NEW CONNECTION!");
-  var pixelArray = grabPixelArrayForPosition(0);
-  var data = {position: {x: 1, y: 1}, pixels: pixelArray};
-  client.send(JSON.stringify(data));
+	if (client.req.url === '/upstream')
+  	console.log("HELLO CHURN!");
+  
+  else {
 
-  client.on('message', function(message) {
+  	console.log("NEW CONNECTION!");
+	  var pixelArray = grabPixelArrayForPosition(0);
+	  var data = {position: {x: 1, y: 1}, pixels: pixelArray};
+	  client.send(JSON.stringify(data));
 
-  });
+	  // client.on('message', function(message) {
+
+	  // });
+	}
+
 }
 
 function grabPixelArrayForPosition(position) {
