@@ -21,6 +21,7 @@ var app = express()
 	, server = http.createServer(app)
 	, credentials = {}
 	, socket
+	, upstream
 	, bServer
 	, db;
 
@@ -40,7 +41,7 @@ function init() {
 	establishDatabaseConnection();
 	setupExpressApp();
 	setupSockets();
-	setupBinaryServer();
+	//setupBinaryServer();
 }
 
 function establishDatabaseConnection() {
@@ -89,22 +90,28 @@ function setupSockets() {
 	socket.on('connection', onConnection);
 }
 
-function setupBinaryServer() {
-	bServer = new BinaryServer({server:server})
-	bServer.on('connection', function(client) {
-		client.on('error', function(error) {
-			console.log(error.stack, error.message);
-		});
-	});
-}
+// function setupBinaryServer() {
+// 	bServer = new BinaryServer({server:server})
+// 	bServer.on('connection', function(client) {
+// 		client.on('error', function(error) {
+// 			console.log(error.stack, error.message);
+// 		});
+// 	});
+// }
 
 // Sockets /////////////////////////////////////////////////////////////////////
 
 function onConnection(client) {
 
-	if (client.req.url === '/upstream')
+	if (client.req.url === '/upstream') {
+
   	console.log("HELLO CHURN!");
-  
+  	upstream = client;
+  	upstream.on('message', function(message) {
+  		console.log("UPSTREAM: " + message);
+  	});
+
+  }
   else {
 
   	console.log("NEW CONNECTION!");

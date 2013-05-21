@@ -6,6 +6,7 @@ var fs = require('fs')
   ,	watchr = require('watchr')
   , canvas = require('canvas')
   , mongoose = require('mongoose')
+  , Websocket = require('ws')
   , BinaryClient = require('binaryjs').BinaryClient;
 
 
@@ -26,6 +27,7 @@ var udp = dgram.createSocket('udp4')
   , workers = 0
   , timer
   , bClient
+  , stream
   , readyToStream
   , db;
 
@@ -37,7 +39,7 @@ fs.readFile(filePath, 'utf8', function(error, data) {
   if (!error) {
     credentials = JSON.parse(data);
     //establishDatabaseConnection();
-    setupStream();
+    setupUpStream();
   }
   else
     console.log(error);
@@ -60,13 +62,22 @@ function establishDatabaseConnection() {
 }
 
 function setupStream() {
-  bClient = new BinaryClient('ws://incubus-7783.onmodulus.net:3000/upstream');
+  bClient = new BinaryClient('ws://incubus-7783.onmodulus.net/upstream');
   bClient.on('open', function() {
     readyToStream = true;
     console.log("SUCK MY STREAM!");
   });
   bClient.on('error', function(error) {
     console.log(error);
+  });
+}
+
+function setupUpStream() {
+  //stream = new Websocket('ws://incubus-7783.onmodulus.net/upstream');
+  stream = new Websocket('ws://localhost:3000/upstream');
+  stream.on('open', function() {
+    readyToStream = true;
+    console.log("SUCK MY STREAM!");
   });
 }
 
@@ -133,8 +144,12 @@ function spawnWorker(job) {
     , img = new canvas.Image;
   img.src = job.data;
   ctx.drawImage(img, 0, 0);
-  var imgData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
-  console.log('[' + job.step + '] (1,1): ' + imgData.data[0] + ', ' + imgData.data[1] + ', ' + imgData.data[2]);
+  var pData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
+  for (var i=0; i<(320*180*4); i+=4) {
+    var pixel = { step: job.step, index: i, r: pData.data[i], g: pData.data[i+1], b: pData.data[i+2]};
+    console.log(pixel);
+    stream.send(JSON.stringify(pixel));
+  }
   workers--;
 }
 

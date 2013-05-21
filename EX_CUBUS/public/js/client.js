@@ -62,7 +62,7 @@ function setupSocket() {
 	};
 
 	socket.onerror = function(error) {
-		setPixelToSpazz();
+		console.log(error);
 	}
 
 }
