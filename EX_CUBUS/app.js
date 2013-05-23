@@ -5,8 +5,8 @@ var fs = require('fs')
 	, express = require('express')
 	, http = require('http')
 	, mongoose = require('mongoose')
-	, ws = require('websocket.io')
-	, BinaryServer = require('binaryjs').BinaryServer;
+	, ws = require('websocket.io');
+	//, BinaryServer = require('binaryjs').BinaryServer;
 
 
 // Models //////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ function establishDatabaseConnection() {
 	db.on('error', console.error.bind(console, 'connection error:'));
 
 	db.once('open', function callback () {
-	  console.log("Connection to DB establishd!");
+	  console.log("Connection to DB established!");
 	});
 
 }
@@ -106,10 +106,8 @@ function onConnection(client) {
 	if (client.req.url === '/upstream') {
 
   	console.log("HELLO CHURN!");
+  	client.on('message', onIncomingStream);
   	upstream = client;
-  	upstream.on('message', function(message) {
-  		console.log("UPSTREAM: " + message);
-  	});
 
   }
   else {
@@ -124,6 +122,28 @@ function onConnection(client) {
 	  // });
 	}
 
+}
+
+function onIncomingStream(message) {
+	//console.log(message);
+	var pixels = JSON.parse(message);
+	if (pixels) {
+		/*console.log("RECEIVED [" 
+			+ pixels[0].step 
+			+ ".png] " 
+			+ ( pixels.length * 4 ) 
+			+ " Bytes");*/
+		var pixel;
+		for (var i = 0; i < pixels.length; i++) {
+			pixel = new Pixel(pixels[i]);
+			pixel.save(function(err, pixel) {
+				if (err)
+					console.log(err);
+				//else
+					//console.log("Pixel saved to DB");
+			});
+		};
+	}
 }
 
 function grabPixelArrayForPosition(position) {

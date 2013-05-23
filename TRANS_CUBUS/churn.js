@@ -25,6 +25,7 @@ var udp = dgram.createSocket('udp4')
   , churn = []
   , counter = 0
   , workers = 0
+  , maxWorkers = 1
   , timer
   , bClient
   , stream
@@ -61,20 +62,20 @@ function establishDatabaseConnection() {
 
 }
 
-function setupStream() {
-  bClient = new BinaryClient('ws://incubus-7783.onmodulus.net/upstream');
-  bClient.on('open', function() {
-    readyToStream = true;
-    console.log("SUCK MY STREAM!");
-  });
-  bClient.on('error', function(error) {
-    console.log(error);
-  });
-}
+// function setupStream() {
+//   bClient = new BinaryClient('ws://incubus-7783.onmodulus.net/upstream');
+//   bClient.on('open', function() {
+//     readyToStream = true;
+//     console.log("SUCK MY STREAM!");
+//   });
+//   bClient.on('error', function(error) {
+//     console.log(error);
+//   });
+// }
 
 function setupUpStream() {
-  //stream = new Websocket('ws://incubus-7783.onmodulus.net/upstream');
-  stream = new Websocket('ws://localhost:3000/upstream');
+  stream = new Websocket('ws://incubus-7783.onmodulus.net/upstream');
+  //stream = new Websocket('ws://localhost:3000/upstream');
   stream.on('open', function() {
     readyToStream = true;
     console.log("SUCK MY STREAM!");
@@ -119,12 +120,12 @@ function loadImages() {
     var source = '../IN_COMING/' + index + '.png';
     churn.push({step: index, data: fs.readFileSync(source)});
   }
-  timer = setInterval(checkForJobs, 10);
+  timer = setInterval(checkForJobs, 100);
 }
 
 function checkForJobs() {
   if (churn.length > 0) {
-     if (workers < 10) {
+     if (workers < maxWorkers) {
         spawnWorker(churn.shift());
         workers++;
       }
@@ -145,10 +146,16 @@ function spawnWorker(job) {
   img.src = job.data;
   ctx.drawImage(img, 0, 0);
   var pData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
+  var pixels = [];
+  var pixel = {};
   for (var i=0; i<(320*180*4); i+=4) {
-    var pixel = { step: job.step, index: i, r: pData.data[i], g: pData.data[i+1], b: pData.data[i+2]};
-    console.log(pixel);
-    stream.send(JSON.stringify(pixel));
+    pixel = { step: job.step, position: i, r: pData.data[i], g: pData.data[i+1], b: pData.data[i+2]};
+    //console.log(pixel);
+    pixels.push(pixel);
+    if (i % 16 === 0) {
+      stream.send(JSON.stringify(pixels));
+      pixels = [];
+    }
   }
   workers--;
 }

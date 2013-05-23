@@ -7,7 +7,6 @@
     "express": "3.0.x",
     "jade": "*",
     "mongoose": "*",
-    "websocket.io": "*",
-    "binaryjs":"*"
+    "websocket.io": "*"
   }
 }
