@@ -16,10 +16,13 @@ const int kProtocolChecksumLength = 1;
 */
 
 int p = 0;
-String programmes[] = {"OFF", "SOLID", "FADE", "STEREO"};
+String programmes[] = {"OFF", "SOLID", "FADE", "STEREO", "FLASH"};
+int delayArray[] = {0,0,20,50,50};
 unsigned int colours[6] = {0,0,0,0,0,0};
-int fadeDirection = 1;
-bool strobeSwitch = false;
+unsigned int flashColours[6] = {255,0,255,255,0,255};
+int flashEasing;
+int fadeDirection;
+bool strobeSwitch;
 
 // Buffers and state
 
@@ -59,11 +62,7 @@ void loop () {
     while (Serial.available() > 0) {
       Serial.read();
     }
-    p++;
-    if (p > 3) { p = 0; };
-    //Serial.print("NEW PROGRAMME: ");
-    Serial.print(programmes[p]);
-    resetAll();
+    nextRoutine();
   }
 
   switch (p) {
@@ -78,10 +77,13 @@ void loop () {
     case 3:
       strobe();
       break;
+    case 4:
+      flash();
+      break;
   }
 
   updateChannels();
-  delay(50);  
+  delay(delayArray[p]);  
 }
 
 void resetAll() {
@@ -93,6 +95,29 @@ void resetAll() {
   colours[5] = 0;
   fadeDirection = 1;
   strobeSwitch = false;
+  flashEasing = 50;
+}
+
+void setColours(unsigned int newColours[]) {
+  for (int i = 0; i < 6; i++)
+  {
+    colours[i] = newColours[i]; 
+  }
+}
+
+void setRoutine(int index) {
+  p = index;
+  //Serial.print("NEW PROGRAMME: ");
+  Serial.print(programmes[p]);
+  resetAll();
+  if (p == 4)
+    setColours(flashColours);
+}
+
+void nextRoutine() {
+  p++;
+  if (p > 4) { p = 0; };
+  setRoutine(p);
 }
 
 void setBothToRed() {
@@ -141,6 +166,23 @@ void strobe() {
   colours[start+1] = 255;
   colours[start+2] = 255; 
   strobeSwitch = !strobeSwitch;
+}
+
+void flash() {
+  int zeroCount = 0;
+  for (int i = 5; i >= 0; i--)
+  {
+    if (colours[i] <= flashEasing) {
+      colours[i] = 0;
+      zeroCount++;
+    }
+    else
+      colours[i] -= flashEasing;
+  }
+  if (flashEasing > 5)
+    flashEasing--;
+  if (zeroCount == 6)
+    setRoutine(2);
 }
 
 /*
