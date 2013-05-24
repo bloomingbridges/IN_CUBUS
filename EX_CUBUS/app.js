@@ -99,6 +99,7 @@ function setupSockets() {
 // 	});
 // }
 
+
 // Sockets /////////////////////////////////////////////////////////////////////
 
 function onConnection(client) {
@@ -113,13 +114,11 @@ function onConnection(client) {
   else {
 
   	console.log("NEW CONNECTION!");
-	  var pixelArray = grabPixelArrayForPosition(0);
-	  var data = {position: {x: 1, y: 1}, pixels: pixelArray};
+  	var newPosition = allocateNewRandomPosition();
+	  var pixelArray = grabPixelArrayForPosition(newPosition);
+	  var data = {position: indexToCoordinates(newPosition), pixels: pixelArray};
 	  client.send(JSON.stringify(data));
 
-	  // client.on('message', function(message) {
-
-	  // });
 	}
 
 }
@@ -144,6 +143,26 @@ function onIncomingStream(message) {
 			});
 		};
 	}
+}
+
+
+// Helpers /////////////////////////////////////////////////////////////////////
+
+function allocateNewRandomPosition() {
+	var success, position;
+	while (!success) {
+		var position = Math.floor(Math.random() * (320*180));
+		if (position) success = true;
+	}
+	return position;
+}
+
+function indexToCoordinates(index) {
+	var x, y;
+	y = Math.floor(index / 320);
+	x = index - (y * 320);
+	console.log(index + " -> X: " + x + ", Y: " + y);
+	return {x:x, y:y};
 }
 
 function grabPixelArrayForPosition(position) {
