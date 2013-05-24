@@ -25,6 +25,11 @@ void incubusApp::setup(){
 	udpConnection.Connect("127.0.0.1", 41234);
 	udpConnection.SetNonBlocking(true);
     
+    //serial.listDevices();
+	vector <ofSerialDeviceInfo> deviceList = serial.getDeviceList();
+    serialPort = deviceList[5].getDeviceName();
+    serial.setup(5,9600);
+    
 }
 
 //--------------------------------------------------------------
@@ -38,6 +43,14 @@ void incubusApp::update(){
             cameraRotation = 0.0;
         }
     }
+    
+    incomingBytes = "";
+    while (serial.available() > 0) {
+        incomingBytes += (char) serial.readByte();
+    }
+    serial.drain();
+    if (incomingBytes.length() > 0)
+        dioderProg = incomingBytes;
     
 }
 
@@ -104,6 +117,8 @@ void incubusApp::draw(){
         ofRect(0,810,1440,12);
         ofSetColor(112,74,158);
         string debugLabel = "DEBUG";
+        debugLabel += (serialPort.length() > 0) ? " // SERIAL PORT: " + serialPort : "";
+        debugLabel += (dioderProg.length() > 0) ? " // CUBE ROUTINE: " + dioderProg : "";
         debugLabel += " // DEGREES: " + ofToString(cameraRotation);
         debugLabel += (recording) ? " // CAPTURING" : "";
         ofDrawBitmapString(debugLabel , 40, 866);
@@ -130,6 +145,9 @@ void incubusApp::keyReleased(int key){
     else if (key == '.') {
         string msg = "BLARGH";
         udpConnection.Send(msg.c_str(),msg.length());
+    }
+    else if (key == '/') {
+        serial.writeByte('>');
     }
     else if (key == 'r') {
         cout << "RECORDING START (" + ofToString(degrees) + ")" << endl;

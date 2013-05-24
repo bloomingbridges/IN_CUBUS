@@ -24,11 +24,15 @@ class incubusApp : public ofBaseApp{
         int firstFrame;
         int degrees;
         float cameraRotation;
+        string dioderProg;
+        string serialPort;
+        string incomingBytes;
         ofImage snapshot;
         ofImage mask;
         ofFbo fbo;
         ofEasyCam camera;
         ofLight lightSource;
         ofxUDPManager udpConnection;
+        ofSerial serial;
 		
 };

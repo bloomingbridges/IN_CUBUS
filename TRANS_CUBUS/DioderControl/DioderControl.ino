@@ -6,13 +6,14 @@ const int GREEN_B = 11;
 const int BLUE_B = 10;
 const int RED_B = 9;
 
-// Protocol details (two header bytes, 12 value bytes, checksum)
+/* Protocol details (two header bytes, 12 value bytes, checksum)
 const int kProtocolHeaderFirstByte = 0xBA;
 const int kProtocolHeaderSecondByte = 0xBE;
 
 const int kProtocolHeaderLength = 2;
 const int kProtocolBodyLength = 12;
 const int kProtocolChecksumLength = 1;
+*/
 
 int p = 0;
 String programmes[] = {"OFF", "SOLID", "FADE", "STEREO"};
@@ -60,8 +61,8 @@ void loop () {
     }
     p++;
     if (p > 3) { p = 0; };
-    Serial.print("NEW PROGRAMME: ");
-    Serial.println(programmes[p]);
+    //Serial.print("NEW PROGRAMME: ");
+    Serial.print(programmes[p]);
     resetAll();
   }
 
@@ -128,8 +129,8 @@ void fade() {
   unsigned int tmp = colours[0];
   if (tmp == 0 || tmp == 255) {
     fadeDirection *= -1;
-    Serial.print("FADE DIRECTION: ");
-    Serial.println(fadeDirection);
+    //Serial.print("FADE DIRECTION: ");
+    //Serial.println(fadeDirection);
   }
 }
 
@@ -142,6 +143,7 @@ void strobe() {
   strobeSwitch = !strobeSwitch;
 }
 
+/*
 void readColourFromSerial(int availableBytes) {
 
   if (!appearToHaveValidMessage) {
@@ -202,3 +204,4 @@ void readColourFromSerial(int availableBytes) {
     appearToHaveValidMessage = false;
   }
 }
+*/
