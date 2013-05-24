@@ -15,9 +15,10 @@ const int kProtocolBodyLength = 12;
 const int kProtocolChecksumLength = 1;
 
 int p = 0;
-String programmes[3] = {"OFF", "SOLID", "FADE"};
+String programmes[] = {"OFF", "SOLID", "FADE", "STEREO"};
 unsigned int colours[6] = {0,0,0,0,0,0};
 int fadeDirection = 1;
+bool strobeSwitch = false;
 
 // Buffers and state
 
@@ -53,16 +54,15 @@ void loop () {
   
   int availableBytes = Serial.available();
   // readColourFromSerial(availableBytes);
-  if (availableBytes > 0) {
-    byte b;
+  if (availableBytes) {
     while (Serial.available() > 0) {
-      b = Serial.read();
+      Serial.read();
     }
-    Serial.print("NEW PROGRAMME: ");
     p++;
-    resetAll();
-    if (p > 2) { p = 0; };
+    if (p > 3) { p = 0; };
+    Serial.print("NEW PROGRAMME: ");
     Serial.println(programmes[p]);
+    resetAll();
   }
 
   switch (p) {
@@ -74,10 +74,13 @@ void loop () {
     case 2:
       fade();
       break;
+    case 3:
+      strobe();
+      break;
   }
 
   updateChannels();
-  delay(10);  
+  delay(50);  
 }
 
 void resetAll() {
@@ -88,6 +91,16 @@ void resetAll() {
   colours[4] = 0;
   colours[5] = 0;
   fadeDirection = 1;
+  strobeSwitch = false;
+}
+
+void setBothToRed() {
+  colours[0] = 255;
+  colours[1] = 0;
+  colours[2] = 0;
+  colours[3] = 255;
+  colours[4] = 0;
+  colours[5] = 0;
 }
 
 void updateChannels() {
@@ -118,6 +131,15 @@ void fade() {
     Serial.print("FADE DIRECTION: ");
     Serial.println(fadeDirection);
   }
+}
+
+void strobe() {
+  setBothToRed();
+  int start = (strobeSwitch) ? 0 : 3;
+  colours[start]   = 0;
+  colours[start+1] = 255;
+  colours[start+2] = 255; 
+  strobeSwitch = !strobeSwitch;
 }
 
 void readColourFromSerial(int availableBytes) {
