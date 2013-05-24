@@ -57,12 +57,16 @@ void setup() {
 void loop () {
   
   int availableBytes = Serial.available();
+  byte command;
   // readColourFromSerial(availableBytes);
   if (availableBytes) {
     while (Serial.available() > 0) {
-      Serial.read();
+      command = Serial.read();
     }
-    nextRoutine();
+    if (command == 'n')
+      nextRoutine();
+    else if (command >= 0 && command <= 4)
+      setRoutine(command);
   }
 
   switch (p) {

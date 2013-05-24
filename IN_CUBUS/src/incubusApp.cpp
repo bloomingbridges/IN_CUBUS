@@ -147,7 +147,22 @@ void incubusApp::keyReleased(int key){
         udpConnection.Send(msg.c_str(),msg.length());
     }
     else if (key == '/') {
-        serial.writeByte('>');
+        serial.writeByte('n');
+    }
+    else if (key == '0') {
+        serial.writeByte(0);
+    }
+    else if (key == '1') {
+        serial.writeByte(1);
+    }
+    else if (key == '2') {
+        serial.writeByte(2);
+    }
+    else if (key == '3') {
+        serial.writeByte(3);
+    }
+    else if (key == '4') {
+        serial.writeByte(4);
     }
     else if (key == 'r') {
         cout << "RECORDING START (" + ofToString(degrees) + ")" << endl;
