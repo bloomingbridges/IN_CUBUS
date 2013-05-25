@@ -149,12 +149,44 @@ function onIncomingStream(message) {
 // Helpers /////////////////////////////////////////////////////////////////////
 
 function allocateNewRandomPosition() {
-	var success, position;
+	var success, position, filledPositions;
 	while (!success) {
-		var position = Math.floor(Math.random() * (320*180));
-		if (position) success = true;
+		filledPositions = []; // TODO retrieve current users from db
+		position = 319 + Math.floor(Math.random() * (318*180));
+		if (filledPositions.indexOf(position) === -1) {
+			if (hasDistanceFromEdge(position)) {
+				success = hasNoImmediateNeighbours(position, filledPositions);
+			}
+		}
 	}
 	return position;
+}
+
+function hasDistanceFromEdge(position) {
+	return (position % 320 !== 0 && position % 319 !== 0) ? true : false;
+}
+
+function hasNoImmediateNeighbours(position, occupied) {
+	if (occupied.indexOf(position-320) === -1) {
+		if (occupied.indexOf(position+320 === -1)) {
+			if (occupied.indexOf(position-1) === -1) {
+				if (occupied.indexOf(position+1) === -1) {
+					if (occupied.indexOf(position-321) === -1) {
+						if (occupied.indexOf(position-319) === -1) {
+							if (occupied.indexOf(position+319) === -1) {
+								if (occupied.indexOf(position+321) === -1) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else {
+		return false;
+	}
 }
 
 function indexToCoordinates(index) {
