@@ -11,8 +11,7 @@ var fs = require('fs')
 
 // Models //////////////////////////////////////////////////////////////////////
 
-var User = require('./models.js').User
-	, Pixel = require('./models.js').Pixel
+var User, Pixel;
 
 
 // Globals /////////////////////////////////////////////////////////////////////
@@ -21,6 +20,7 @@ var app = express()
 	, server = http.createServer(app)
 	, credentials = {}
 	, socket
+  , clients = []
 	, upstream
 	, bServer
 	, db;
@@ -52,10 +52,15 @@ function establishDatabaseConnection() {
 
 	// Mongoose Handlers /////////////////////////////////////////////////////////
 
+	if (app.get('env') === 'development')
+		mongoose.set('debug', true);
+
 	db.on('error', console.error.bind(console, 'connection error:'));
 
-	db.once('open', function callback () {
+	db.once('open', function() {
 	  console.log("Connection to DB established!");
+	  User = db.model('User', require('./models.js').UserSchema);
+		Pixel = db.model('Pixel', require('./models.js').PixelSchema);
 	});
 
 }
@@ -118,9 +123,26 @@ function onConnection(client) {
 	  var pixelArray = grabPixelArrayForPosition(newPosition);
 	  var data = {position: indexToCoordinates(newPosition), pixels: pixelArray};
 	  client.send(JSON.stringify(data));
+	  var newUser = new User({position:newPosition, authenticated:false});
+	  newUser.save(onSavedToMongoDB);
 
 	}
 
+}
+
+function onSavedToMongoDB(error) {
+	if (!error) {
+		console.log("DATA SUCCESSFULLY STORED IN DATABASE");
+		User.find(updateInventory);
+	}
+	else
+		console.log(error);
+}
+
+function updateInventory(error, items) {
+	if (!error)
+		clients = items;
+	else console.log(error);
 }
 
 function onIncomingStream(message) {
@@ -151,7 +173,9 @@ function onIncomingStream(message) {
 function allocateNewRandomPosition() {
 	var success, position, filledPositions;
 	while (!success) {
-		filledPositions = []; // TODO retrieve current users from db
+		filledPositions = clients;
+		//console.log("OCCUPIED POSITIONS: ");
+		//console.log(filledPositions);
 		position = 319 + Math.floor(Math.random() * (318*180));
 		if (filledPositions.indexOf(position) === -1) {
 			if (hasDistanceFromEdge(position)) {
@@ -160,6 +184,14 @@ function allocateNewRandomPosition() {
 		}
 	}
 	return position;
+}
+
+function getOccupiedPixels() {
+	var posArray = [];
+	for (var c in clients) {
+		posArray.push(c.position);
+	}
+	return posArray;
 }
 
 function hasDistanceFromEdge(position) {

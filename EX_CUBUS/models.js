@@ -2,8 +2,7 @@
 var mongoose = require('mongoose');
 
 var userSchema = mongoose.Schema({
-	id: String,
-	position: Number,
+	position: {type: Number, unique: true},
 	authenticated: {type: Boolean, default: false}
 });
 
@@ -15,5 +14,5 @@ var pixelSchema = mongoose.Schema({
 	b: {type: Number, default: 107},
 });
 
-module.exports.User = mongoose.model('User', userSchema);
-module.exports.Pixel = mongoose.model('Pixel', pixelSchema);
+module.exports.UserSchema = userSchema;
+module.exports.PixelSchema = pixelSchema;
