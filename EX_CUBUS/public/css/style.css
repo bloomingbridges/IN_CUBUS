@@ -30,11 +30,51 @@ a:hover, a:active {
 	transform: translate(0,0);
 }
 
+#help {
+	padding: 12px;
+	background-color: #403D36;
+	display: none;
+}
+
+#help h1 {
+	color: transparent;
+	text-indent: -9999px;
+	margin: 0.5em auto;
+	background: transparent url(logo.png) no-repeat left top;
+	width: 195px;
+	height: 27px;
+}
+
+#help p {
+	color: rgb(128,121,107);
+	text-align: justify;
+	margin: 2em 12px 1em 12px;
+}
+
 #info {
 	color: #80796b;
 	margin-top: 12px;
-	text-indent: 12px;
+	padding: 0 12px;
 	font-size: small;
+}
+
+#info p {
+	color: #403D36;
+	text-align: center;
+	line-height: 2em;
+}
+
+#info p span {
+	color: rgb(128,121,107);
+}
+
+#info p a {
+	text-decoration: none;
+	background-color: #403D36;
+	position: block;
+	padding: 2px 4px;
+	border-radius: 2px;
+	box-shadow: 0 2px 4px #222;
 }
 
 @media only screen and (min-width : 768px) {
@@ -45,7 +85,7 @@ a:hover, a:active {
 		border: 12px solid #403D36;
 		margin: 12px auto;
 	}
-	#info {
-		text-indent: 0px;
+	#help {
+		width: 100%;
 	}
 }

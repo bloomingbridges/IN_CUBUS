@@ -15,6 +15,10 @@ $(document).ready(function() {
 		fitPixel();
 	});	
 	setupSocket();
+	$('a#expandHelp').on('click', function(event) {
+		$('#help').show();
+		$(event.target).remove();
+	});
 });
 
 function fitPixel() {
@@ -53,8 +57,9 @@ function setupSocket() {
 	socket.onmessage = function(message) {
 		var data = JSON.parse(message.data);
 		pixelValues = data.pixels;
-		$('#info').html("You have been allocated ( X: " + data.position.x + " | Y: " + data.position.y + " )");
-		$('#info').append(' <a href="#">info</a> <a href="#">increase</a>');
+		$('#info p:first-child').html("<p>You have been allocated<br />( X: <span>" 
+			+ data.position.x + "</span> | Y: <span>" 
+			+ data.position.y + '</span> )</p>');
 	};
 
 	socket.onclose = function() {
