@@ -19,8 +19,8 @@ var User, Pixel;
 var app = express()
 	, server = http.createServer(app)
 	, credentials = {}
-	, socket
   , clients = []
+	, socket
 	, upstream
 	, bServer
 	, db;
@@ -125,6 +125,17 @@ function onConnection(client) {
 	  client.send(JSON.stringify(data));
 	  var newUser = new User({position:newPosition, authenticated:false});
 	  newUser.save(onSavedToMongoDB);
+	  client.id = newPosition;
+	  client.on('close', function() {
+	  	console.log('#' + client.id + " has left.");
+	  	User.remove({position:client.id}, function(error) {
+	  		if (error)
+	  			console.log(error);
+	  		else
+	  			console.log("DB entry has been removed successfully!");
+	  	});
+	  	// TODO notify cube etc.
+	  });
 
 	}
 
@@ -161,7 +172,7 @@ function onIncomingStream(message) {
 				if (err)
 					console.log(err);
 				//else
-					//console.log("Pixel saved to DB");
+					//console.log("PIXEL SAVED TO DB");
 			});
 		};
 	}
