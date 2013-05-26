@@ -5,6 +5,7 @@ var fs = require('fs')
   , dgram = require('dgram')
   ,	watchr = require('watchr')
   , canvas = require('canvas')
+  , Easel = require('./easel.js')
   , mongoose = require('mongoose')
   , Websocket = require('ws')
   , BinaryClient = require('binaryjs').BinaryClient;
@@ -23,6 +24,7 @@ var udp = dgram.createSocket('udp4')
   , churning = false
   , queue = []
   , churn = []
+  , easels = []
   , counter = 0
   , workers = 0
   , maxWorkers = 1
@@ -39,28 +41,12 @@ var filePath = __dirname + '/../EX_CUBUS/credentials.json';
 fs.readFile(filePath, 'utf8', function(error, data) {
   if (!error) {
     credentials = JSON.parse(data);
-    //establishDatabaseConnection();
+    setupEasels();
     setupUpStream();
   }
   else
     console.log(error);
 });
-
-function establishDatabaseConnection() {
-
-  var auth = 'churn' + ':' + credentials.db.PWD + '@';
-  var address = credentials.db.URL + credentials.db.NAME;
-  db = mongoose.createConnection('mongodb://' + auth + address);
-
-  // Mongoose Handlers /////////////////////////////////////////////////////////
-
-  db.on('error', console.error.bind(console, 'Connection error:'));
-
-  db.once('open', function callback () {
-    console.log("Connection to DB establishd!");
-  });
-
-}
 
 // function setupStream() {
 //   bClient = new BinaryClient('ws://incubus-7783.onmodulus.net/upstream');
@@ -72,6 +58,12 @@ function establishDatabaseConnection() {
 //     console.log(error);
 //   });
 // }
+
+function setupEasels() {
+  for (var e=0; e<360; e++) {
+    easels.push( new Easel('../IN_COMING/'+e+'.png') );
+  }
+}
 
 function setupUpStream() {
   stream = new Websocket('ws://incubus-7783.onmodulus.net/upstream');
@@ -95,11 +87,18 @@ watchr.watch({
       if (/*changeType === "create" || */changeType === "update") {
       	var index = filePath.substring(13,filePath.length-4);
       	console.log("UPDATED [" + index + '] "' + filePath + '"');
-        if (queue.indexOf(index) === -1) {
-          queue.push(index);
-          if (!churning)
-            startChurning();
-        }
+        //easels[index].refresh(fs.readFileSync(__dirname+"/"+filePath));
+        fs.readFile(__dirname+"/"+filePath, function(err, data){
+          if (!err)
+            easels[index].refresh(data);
+          else
+            console.log(err);
+        });
+        // if (queue.indexOf(index) === -1) {
+        //   queue.push(index);
+        //   if (!churning)
+        //     startChurning();
+        // }
       }
     }
 	}
