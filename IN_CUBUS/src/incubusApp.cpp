@@ -28,7 +28,7 @@ void incubusApp::setup(){
     //serial.listDevices();
 	vector <ofSerialDeviceInfo> deviceList = serial.getDeviceList();
     serialPort = deviceList[5].getDeviceName();
-    serial.setup(5,9600);
+    wired = serial.setup(5,9600);
     
 }
 
@@ -44,14 +44,15 @@ void incubusApp::update(){
         }
     }
     
-    incomingBytes = "";
-    while (serial.available() > 0) {
-        incomingBytes += (char) serial.readByte();
-    }
-    serial.drain();
-    if (incomingBytes.length() > 0)
-        dioderProg = incomingBytes;
-    
+    if (wired) {
+        incomingBytes = "";
+        while (serial.available() > 0) {
+            incomingBytes += (char) serial.readByte();
+        }
+        serial.drain();
+        if (incomingBytes.length() > 0)
+            dioderProg = incomingBytes;
+}
 }
 
 //--------------------------------------------------------------

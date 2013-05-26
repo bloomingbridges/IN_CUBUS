@@ -21,6 +21,7 @@ class incubusApp : public ofBaseApp{
         bool debug;
         bool unmasked;
         bool recording;
+        bool wired;
         int firstFrame;
         int degrees;
         float cameraRotation;
