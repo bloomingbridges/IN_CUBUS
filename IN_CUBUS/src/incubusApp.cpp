@@ -27,8 +27,11 @@ void incubusApp::setup(){
     
     //serial.listDevices();
 	vector <ofSerialDeviceInfo> deviceList = serial.getDeviceList();
-    serialPort = deviceList[5].getDeviceName();
-    wired = serial.setup(5,9600);
+    
+    if (deviceList.size() >= 5) {
+        serialPort = deviceList[5].getDeviceName();
+        wired = serial.setup(5,9600);
+    }
     
 }
 
