@@ -52,6 +52,8 @@ function setupSocket() {
 	else
 		socket = new WebSocket('ws://incubus-7783.onmodulus.net/');
 
+	$('#info p:first-child').html("Connecting..");
+
 	socket.onopen = function() {
 		console.log("Connection established!");
 		//pixelValues = [{r:"255",g:"0",b:"255"}];
