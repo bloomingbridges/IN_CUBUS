@@ -2,12 +2,11 @@
 // Modules /////////////////////////////////////////////////////////////////////
 
 var fs = require('fs')
-  , dgram = require('dgram')
   ,	watchr = require('watchr')
   , canvas = require('canvas')
   , Easel = require('./easel.js')
   , mongoose = require('mongoose')
-  , Websocket = require('ws')
+  , WebSocket = require('ws')
   , BinaryClient = require('binaryjs').BinaryClient;
 
 
@@ -66,8 +65,8 @@ function setupEasels() {
 }
 
 function setupUpStream() {
-  stream = new Websocket('ws://incubus-7783.onmodulus.net/upstream');
-  //stream = new Websocket('ws://localhost:3000/upstream');
+  stream = new WebSocket('ws://incubus-7783.onmodulus.net/upstream');
+  //stream = new WebSocket('ws://localhost:3000/upstream');
   stream.on('open', function() {
     readyToStream = true;
     console.log("SUCK MY STREAM!");

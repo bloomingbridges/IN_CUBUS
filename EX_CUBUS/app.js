@@ -21,6 +21,7 @@ var app = express()
 	, credentials = {}
   , clients = []
 	, socket
+	, mediator
 	, upstream
 	, bServer
 	, db;
@@ -115,18 +116,24 @@ function onConnection(client) {
   	client.on('message', onIncomingStream);
   	upstream = client;
 
-  }
-  else {
+  } else if (client.req.url === '/notifications') {
+
+  	console.log("HELLO MEDIATOR!");
+  	mediator = client;
+
+  } else {
 
   	console.log("NEW CONNECTION!");
   	var newPosition = allocateNewRandomPosition();
 	  var pixelArray = grabPixelArrayForPosition(newPosition);
 	  var data = {position: indexToCoordinates(newPosition), pixels: pixelArray};
 	  client.send(JSON.stringify(data));
+	  if (mediator) mediator.send(JSON.stringify({created:newPosition}));
 	  var newUser = new User({position:newPosition, authenticated:false});
 	  newUser.save(onSavedToMongoDB);
 	  client.id = newPosition;
 	  client.on('close', function() {
+	  	if (mediator) mediator.send(JSON.stringify({left:client.id}));
 	  	console.log('#' + client.id + " has left.");
 	  	User.remove({position:client.id}, function(error) {
 	  		if (error)
