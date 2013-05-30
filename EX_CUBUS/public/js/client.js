@@ -7,18 +7,22 @@ var pixel
 	, spazz = false;
 
 $(document).ready(function() {
-	pixel = $('#pixel');
-	fitPixel();
-	startPlayback();
-	$(window).resize(function(e) {
-		console.log("resizing..");
-		fitPixel();
-	});	
-	setupSocket();
+	$('#help').hide();
+	$('#info').append('<p><a href="#help" id="expandHelp">HELP</a></p>');
 	$('a#expandHelp').on('click', function(event) {
 		$('#help').show();
 		$(event.target).remove();
 	});
+	if (Modernizr.websockets) {
+		pixel = $('#pixel');
+		pixel.show();
+		fitPixel();
+		startPlayback();
+		$(window).resize(function(e) {
+			fitPixel();
+		});	
+		setupSocket();
+	} 
 });
 
 function fitPixel() {

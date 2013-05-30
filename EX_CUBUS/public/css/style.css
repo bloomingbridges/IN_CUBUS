@@ -23,7 +23,7 @@ a:hover, a:active {
 #pixel {
 	width: 100%;
 	height: 320px;
-	display: block;
+	display: none;
 	background-color: #A3D9D8;
 	border: none;
 	/*-webkit-transition: 0.3s background-color linear;*/
@@ -33,7 +33,7 @@ a:hover, a:active {
 #help {
 	padding: 12px;
 	background-color: #403D36;
-	display: none;
+	display: block;
 }
 
 #help h1 {

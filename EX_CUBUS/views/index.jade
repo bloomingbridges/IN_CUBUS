@@ -1,5 +1,5 @@
 doctype5
-html
+html(class='no-js')
   head
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, user-scalable=no, initial-scale = 1, maximum-scale = 1')
@@ -11,6 +11,7 @@ html
     script
       port = #{port};
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
+    script(src="/js/modernizr.min.js")
   body
     #container
       #pixel
@@ -18,7 +19,6 @@ html
         h1 IN//CUBUS
         p This is some information on the project. Embrace the pixel!
       #info
-        p Connecting..
-        p
-          a(href="#help", id="expandHelp") HELP
+        p Unfortunately it looks like your device is unsuitable for our purpose. If you're on Anroid, try using  
+          a(href="https://play.google.com/store/apps/details?id=com.android.chrome&hl=en") Chrome
     script(src="/js/client.js")
