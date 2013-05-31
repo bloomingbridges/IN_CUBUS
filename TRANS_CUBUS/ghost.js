@@ -5,7 +5,7 @@ var address = 'incubus.bloomingbridges.co.uk/'
 function establishSocketConnection() {
 	var socket = new WebSocket('ws://'+address);
 	socket.onopen = function(event) {
-		console.log("Hoo!");
+		console.log("Boo!");
 	}
 	socket.onmessage = function(event) {
 		console.log("Lingering..");
@@ -16,10 +16,12 @@ function establishSocketConnection() {
 	}
 }
 
-var page = require('webpage').create();
-page.open('http://'+address, function(status) {
-	if (status === 'success') {
-		console.log("Boo!");
-		establishSocketConnection();
-	}
-});
+// var page = require('webpage').create();
+// page.open('http://'+address, function(status) {
+// 	if (status === 'success') {
+// 		console.log("Boo!");
+// 		establishSocketConnection();
+// 	}
+// });
+
+establishSocketConnection();

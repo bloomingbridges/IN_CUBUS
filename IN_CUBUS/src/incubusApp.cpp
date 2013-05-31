@@ -233,6 +233,4 @@ void incubusApp::removeClient(int pos){
     mask.update();
     if (connectedClients == 0)
         serial.writeByte(0);
-    else
-        serial.writeByte(2);
 }

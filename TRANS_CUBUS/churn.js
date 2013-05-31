@@ -18,8 +18,7 @@ var User = require('../EX_CUBUS/models.js').User
 
 // Globals /////////////////////////////////////////////////////////////////////
 
-var udp = dgram.createSocket('udp4')
-  , credentials = {}
+var credentials = {}
   , churning = false
   , queue = []
   , churn = []
