@@ -8,7 +8,7 @@ var pixel
 
 $(document).ready(function() {
 	$('#help').hide();
-	$('#info').append('<p><a href="#help" id="expandHelp">HELP</a></p>');
+	$('#info').append('<p><a href="#help" id="expandHelp">//ABØUT</a></p>');
 	$('a#expandHelp').on('click', function(event) {
 		$('#help').show();
 		$(event.target).remove();
