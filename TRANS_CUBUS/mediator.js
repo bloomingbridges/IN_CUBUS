@@ -13,30 +13,6 @@ var udp = dgram.createSocket('udp4')
   , socket;
 
 
-// WebSocket ///////////////////////////////////////////////////////////////////
-
-socket = new WebSocket('ws://incubus-7783.onmodulus.net/notifications');
-//socket = new WebSocket('ws://localhost:3000/notifications');
-
-socket.on('open', function() {
-  console.log("Listening for changes..");
-});
-
-socket.on('message', function(msg, flags) {
-	var data = JSON.parse(msg);
-	if (data.created) {
-		if (udp) udpSendMessage(new Buffer("HAI:"+data.created));
-		console.log('Client created at: ' + data.created);
-	} else if (data.left) {
-		if (udp) udpSendMessage(new Buffer("BAI:"+data.left));
-		console.log('Client at #' + data.left + " has disappeared.");
-	}
-	else {
-		console.log('Received: ' + msg);
-	}
-});
-
-
 // UDP /////////////////////////////////////////////////////////////////////////
 
 udp.on("message", function (msg, rinfo) {
@@ -58,3 +34,34 @@ function udpSendComplete(err) {
 }
 
 udp.bind(myUdPort);
+
+
+// WebSocket ///////////////////////////////////////////////////////////////////
+
+socket = new WebSocket('ws://incubus-7783.onmodulus.net/notifications');
+//socket = new WebSocket('ws://localhost:3000/notifications');
+
+socket.on('open', function() {
+  console.log("Listening for changes..");
+  if (udp) udpSendMessage("NEW:SESSION");
+});
+
+socket.on('message', function(msg, flags) {
+	var data = JSON.parse(msg);
+	if (data.created) {
+		if (udp) udpSendMessage(new Buffer("HAI:"+data.created));
+		console.log('Client created at: ' + data.created);
+	} else if (data.left) {
+		if (udp) udpSendMessage(new Buffer("BAI:"+data.left));
+		console.log('Client at #' + data.left + " has disappeared.");
+	}
+	else {
+		console.log('Received: ' + msg);
+	}
+});
+
+socket.on('close', function() {
+	if (udp) udpSendMessage(new Buffer("ERR:SPAZZ"));
+	console.log('Connection lost :<');
+});
+

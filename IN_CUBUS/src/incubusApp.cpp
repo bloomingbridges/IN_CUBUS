@@ -64,10 +64,14 @@ void incubusApp::update(){
 	if(message!=""){
         cout << message << endl;
         vector<string> data = ofSplitString(message, ":");
-        if (data[0] == "HAI")
+        if (data[0] == "NEW")
+            serial.writeByte(0); // TODO Check how many clients are connected
+        else if (data[0] == "HAI")
             serial.writeByte(4);
         else if (data[0] == "BAI")
-            serial.writeByte(0);
+            serial.writeByte(1); // TODO Change after Debugging
+        else if (data[0] == "ERR")
+            serial.writeByte(3);
     }
     
 }
