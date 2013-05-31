@@ -16,12 +16,15 @@ class incubusApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
         void resetMask(bool noisy);
+        void addNewClient(int pos);
+        void removeClient(int pos);
     
     private:
         bool debug;
         bool unmasked;
         bool recording;
         bool wired;
+        int connectedClients;
         int firstFrame;
         int degrees;
         float cameraRotation;

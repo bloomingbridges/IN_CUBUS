@@ -18,6 +18,7 @@ void incubusApp::setup(){
     debug = true;
     degrees = 0;
     cameraRotation = 0.0;
+    connectedClients = 0;
     if (debug) ofSetFrameRate(30);
     
     //create the socket and set to send to 127.0.0.1:11999
@@ -58,18 +59,18 @@ void incubusApp::update(){
             dioderProg = incomingBytes;
     }
     
-    char udpMessage[100];
-	udpConnection.Receive(udpMessage,100);
+    char udpMessage[265];
+	udpConnection.Receive(udpMessage,265);
 	string message = udpMessage;
 	if(message!=""){
         cout << message << endl;
         vector<string> data = ofSplitString(message, ":");
         if (data[0] == "NEW")
-            serial.writeByte(0); // TODO Check how many clients are connected
+            serial.writeByte(0);
         else if (data[0] == "HAI")
-            serial.writeByte(4);
+            addNewClient(atoi(data[1].c_str()));
         else if (data[0] == "BAI")
-            serial.writeByte(1); // TODO Change after Debugging
+            removeClient(atoi(data[1].c_str()));
         else if (data[0] == "ERR")
             serial.writeByte(3);
     }
@@ -117,9 +118,9 @@ void incubusApp::draw(){
     ofSetMinMagFilters(GL_NEAREST, GL_NEAREST);
     fbo.draw(0.f, 0.f);
     
-    int p = (int) ofRandom(57600);
-    mask.getPixelsRef()[p*4+3] = (unsigned char) 0;
-    mask.update();
+//    int p = (int) ofRandom(57600);
+//    mask.getPixelsRef()[p*4+3] = (unsigned char) 0;
+//    mask.update();
     
     if (!unmasked) {
         ofEnableAlphaBlending();
@@ -215,4 +216,23 @@ void incubusApp::resetMask(bool noisy){
         mask.getPixelsRef()[i+3] = (unsigned char) 255;
     }
     mask.update();
+}
+
+//--------------------------------------------------------------
+void incubusApp::addNewClient(int pos){
+    connectedClients++;
+    serial.writeByte(4);
+    mask.getPixelsRef()[pos*4+3] = (unsigned char) 0;
+    mask.update();
+}
+
+//--------------------------------------------------------------
+void incubusApp::removeClient(int pos){
+    connectedClients--;
+    mask.getPixelsRef()[pos*4+3] = (unsigned char) 255;
+    mask.update();
+    if (connectedClients == 0)
+        serial.writeByte(0);
+    else
+        serial.writeByte(2);
 }

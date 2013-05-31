@@ -43,7 +43,7 @@ socket = new WebSocket('ws://incubus-7783.onmodulus.net/notifications');
 
 socket.on('open', function() {
   console.log("Listening for changes..");
-  if (udp) udpSendMessage("NEW:SESSION");
+  if (udp) udpSendMessage(new Buffer("NEW:SESSION"));
 });
 
 socket.on('message', function(msg, flags) {
