@@ -95,6 +95,10 @@ a:hover, a:active {
 
 @media only screen and (min-width : 768px) {
 	
+	body {
+		/*min-height: 1127px;*/
+	}
+
 	#container {
 		max-width: 600px;
 	}
@@ -103,7 +107,7 @@ a:hover, a:active {
 		border: 12px solid #403D36;
 		margin: 12px auto;
 	}
-	
+
 	#help {
 		width: 100%;
 	}

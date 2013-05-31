@@ -5,7 +5,8 @@ var fs = require('fs')
 	, express = require('express')
 	, http = require('http')
 	, mongoose = require('mongoose')
-	, ws = require('websocket.io');
+	, ws = require('websocket.io')
+	, fb = require('facebook-node-sdk');
 	//, BinaryServer = require('binaryjs').BinaryServer;
 
 
@@ -74,15 +75,30 @@ function setupExpressApp() {
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.use(express.logger('dev'));
+	app.use(express.bodyParser());
+	app.use(express.cookieParser());
+	app.use(express.session({ secret: 'blargh' }));
+	app.use(fb.middleware({appId: credentials.fb.APP_ID, 
+		secret: credentials.fb.APP_SECRET}));
 	app.use(express.static(__dirname + '/public'));
 
 	// Routes ////////////////////////////////////////////////////////////////////
 
 	app.get('/', function(req,res) {
-		res.render('index',
-				{ title: app.get('title'),
-					port: app.get('port') }
-			);
+		res.render('index', { 
+			title: app.get('title'),
+			port: app.get('port') 
+		});
+	});
+
+	app.post('/', fb.loginRequired(), function(req,res) {
+		req.facebook.api('/me', function(err, user) {
+			res.render('index', { 
+				title: app.get('title'),
+				port: app.get('port'),
+				me: user
+			});
+		});
 	});
 
 	server.listen(app.get('port'), function(){

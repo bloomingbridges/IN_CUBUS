@@ -35,6 +35,8 @@ void incubusApp::setup(){
         wired = serial.setup(5,9600);
     }
     
+    ofToggleFullscreen();
+    
 }
 
 //--------------------------------------------------------------
