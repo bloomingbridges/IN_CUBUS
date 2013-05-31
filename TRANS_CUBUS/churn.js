@@ -158,18 +158,3 @@ function spawnWorker(job) {
   workers--;
 }
 
-
-// UDP /////////////////////////////////////////////////////////////////////////
-
-udp.on("message", function (msg, rinfo) {
-  console.log("Receiving: " + msg + " from " +
-    rinfo.address + ":" + rinfo.port);
-});
-
-udp.on("listening", function () {
-  var address = udp.address();
-  console.log("\n### TRANS//CUBUS is churning on " + address.port + "\n");
-});
-
-udp.bind(41234);
-

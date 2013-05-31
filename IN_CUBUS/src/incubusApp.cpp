@@ -23,6 +23,7 @@ void incubusApp::setup(){
     //create the socket and set to send to 127.0.0.1:11999
 	udpConnection.Create();
 	udpConnection.Connect("127.0.0.1", 41234);
+    udpConnection.Bind(11999);
 	udpConnection.SetNonBlocking(true);
     
     //serial.listDevices();
@@ -55,7 +56,20 @@ void incubusApp::update(){
         serial.drain();
         if (incomingBytes.length() > 0)
             dioderProg = incomingBytes;
-}
+    }
+    
+    char udpMessage[100];
+	udpConnection.Receive(udpMessage,100);
+	string message = udpMessage;
+	if(message!=""){
+        cout << message << endl;
+        vector<string> data = ofSplitString(message, ":");
+        if (data[0] == "HAI")
+            serial.writeByte(4);
+        else if (data[0] == "BAI")
+            serial.writeByte(0);
+    }
+    
 }
 
 //--------------------------------------------------------------
