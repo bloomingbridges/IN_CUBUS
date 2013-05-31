@@ -74,6 +74,7 @@ function setupSocket() {
 	};
 
 	socket.onclose = function() {
+		$('#pixel').removeClass('connecting');
 		setPixelToSpazz();
 	};
 
