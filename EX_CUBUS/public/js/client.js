@@ -55,17 +55,22 @@ function setupSocket() {
 	$('#info p:first-child').html("Connecting..");
 
 	socket.onopen = function() {
-		console.log("Connection established!");
-		//pixelValues = [{r:"255",g:"0",b:"255"}];
+		//console.log("Connection established!");
+		//$('#pixel').removeClass('connecting');
 		//index = 0;
 	};
 
 	socket.onmessage = function(message) {
 		var data = JSON.parse(message.data);
-		pixelValues = data.pixels;
-		$('#info p:first-child').html("<p>You have been allocated<br />( X: <span>" 
-			+ data.position.x + "</span> | Y: <span>" 
-			+ data.position.y + '</span> )</p>');
+		if (data.position) {
+			pixelValues = data.pixels;
+			$('#info p:first-child').html("<p>You have been allocated<br />( X: <span>" 
+				+ data.position.x + "</span> | Y: <span>" 
+				+ data.position.y + '</span> )</p>');
+			setTimeout(300, function() {
+				$('#pixel').removeClass('connecting');
+			});
+		}
 	};
 
 	socket.onclose = function() {
