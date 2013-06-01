@@ -41,5 +41,6 @@ class incubusApp : public ofBaseApp{
         ofxUDPManager udpConnection;
         ofSerial serial;
         ofImage qrCode;
+        ofTrueTypeFont onRamp;
 		
 };

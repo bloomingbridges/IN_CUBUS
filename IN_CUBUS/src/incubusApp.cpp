@@ -9,7 +9,7 @@ void incubusApp::setup(){
     mask.setUseTexture(true);
     resetMask(true);
     
-    //ofSetSmoothLighting(true);
+    ofSetSmoothLighting(true);
     lightSource.enable();
     lightSource.setPointLight();
     lightSource.setPosition(160, 180, 0);
@@ -37,6 +37,7 @@ void incubusApp::setup(){
     }
     
     qrCode.loadImage("qrcode.png");
+    onRamp.loadFont("ONRAMP.ttf", 28);
     
     ofToggleFullscreen();
     
@@ -111,15 +112,35 @@ void incubusApp::draw(){
 //    mask.getPixelsRef()[p*4+3] = (unsigned char) 0;
 //    mask.update();
     
-    ofSetColor(255, 255, 255);
+    ofSetColor(41, 41, 41);
     ofRect(0, 0, 140, 1080);
     
-    qrCode.draw(4, 4, 50, 50);
+    ofSetColor(64, 61, 54);
+    ofRect(32, 64, 76, 76);
     
-    //ofSetColor(171,243,172);
-    //ofRect(159, 89, 4, 4);
+    ofSetColor(255, 255, 255);
+    qrCode.draw(38, 70, 64, 64);
     
     ofPopMatrix();
+    
+    if (ofGetWindowMode() == OF_FULLSCREEN) {
+        if (debug) {
+            ofPushMatrix();
+            ofScale(0.73, 0.73);
+        }
+        ofSetColor(239, 207, 162);
+        onRamp.drawString("No QR-code scanner at hand?" , 32, 920);
+        ofSetColor(64, 61, 54);
+        onRamp.drawString("Search for IN//CUBUS on facebook or" , 32, 950);
+        onRamp.drawString("navigate to apps.facebook.com/in_cubus manually." , 32, 980);
+        
+        ofSetColor(239, 207, 162);
+        onRamp.drawString("Not a facebook user? Don't worry, " , 32, 1040);
+        ofSetColor(64, 61, 54);
+        onRamp.drawString("you can still participate by heading to" , 32, 1070);
+        onRamp.drawString("incubus.bloomingbridges.co.uk" , 32, 1100);
+        if (debug) ofPopMatrix();
+    }
     
     if (debug) {
         ofSetColor(208,222,255);
@@ -153,11 +174,8 @@ void incubusApp::keyReleased(int key){
     else if (key == 'f') {
         ofToggleFullscreen();
     }
-    else if (key == 'm') {
-        unmasked = !unmasked;
-    }
     else if (key == '.') {
-        string msg = "BLARGH";
+        string msg = "FLUSH";
         udpConnection.Send(msg.c_str(),msg.length());
     }
     else if (key == '/') {
@@ -226,9 +244,9 @@ void incubusApp::drawCube(bool toBuffer){
 void incubusApp::resetMask(bool noisy){
     int i = 0;
     for( i=0; i < mask.getPixelsRef().size(); i+=4) {
-        mask.getPixelsRef()[i]   = (unsigned char) (noisy) ? ofRandom(47) : 31;
-        mask.getPixelsRef()[i+1] = (unsigned char) (noisy) ? ofRandom(84) : 46;
-        mask.getPixelsRef()[i+2] = (unsigned char) (noisy) ? ofRandom(107) : 103;
+        mask.getPixelsRef()[i]   = (unsigned char) (noisy) ? 47 + ofRandom(60) : 31;
+        mask.getPixelsRef()[i+1] = (unsigned char) (noisy) ? 84 + ofRandom(40) : 46;
+        mask.getPixelsRef()[i+2] = (unsigned char) (noisy) ? 107 + ofRandom(10) : 103;
         mask.getPixelsRef()[i+3] = (unsigned char) 255;
     }
     mask.update();
