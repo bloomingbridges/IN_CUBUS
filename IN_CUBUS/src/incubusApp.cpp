@@ -39,6 +39,11 @@ void incubusApp::setup(){
     qrCode.loadImage("qrcode.png");
     logo.loadImage("logo.png");
     
+    infoText.init("ONRAMP.ttf", 48);
+    infoText.setText("IN      CUBUS");
+    infoText.setColor(239, 207, 162, 255);
+    infoText.wrapTextForceLines(1);
+    
     accessText.init("ONRAMP.ttf", 28);
     accessText.setText("No QR-code scanner at hand? \n Search for IN//CUBUS on facebook or navigate to \n apps.facebook.com/in_cubus manually. \n \n Not a facebook user? Don't worry, you can still participate by heading to \n incubus.bloomingbridges.co.uk");
     accessText.wrapTextX(720);
@@ -141,8 +146,11 @@ void incubusApp::draw(){
             ofPushMatrix();
             ofScale(0.73, 0.73);
         }
-        ofSetColor(239, 207, 162);
+        
+        infoText.drawCenter(420, 20);
         accessText.drawCenter(420, 820);
+        
+//        ofSetColor(239, 207, 162);
 //        onRamp.drawString("No QR-code scanner at hand?" , 32, 920);
 //        ofSetColor(64, 61, 54);
 //        onRamp.drawString("Search for IN//CUBUS on facebook or" , 32, 950);
@@ -155,10 +163,6 @@ void incubusApp::draw(){
 //        onRamp.drawString("incubus.bloomingbridges.co.uk" , 32, 1100);
         if (debug) ofPopMatrix();
     }
-    
-    ofEnableAlphaBlending();
-    logo.draw(325,160,195,27);
-    ofDisableAlphaBlending();
     
     if (debug) {
         ofSetColor(208,222,255);
@@ -296,9 +300,11 @@ void incubusApp::resetMask(bool noisy){
 void incubusApp::messWithMask(){
     int i = 0;
     for( i=0; i < mask.getPixelsRef().size(); i+=4) {
-        mask.getPixelsRef()[i]   = (unsigned char) 47 + ofRandom(60);
-        mask.getPixelsRef()[i+1] = (unsigned char) 84 + ofRandom(40);
-        mask.getPixelsRef()[i+2] = (unsigned char) 107 + ofRandom(10);
+        if (mask.getPixelsRef()[i+3] != 255) {
+            mask.getPixelsRef()[i]   = (unsigned char) 47 + ofRandom(60);
+            mask.getPixelsRef()[i+1] = (unsigned char) 84 + ofRandom(40);
+            mask.getPixelsRef()[i+2] = (unsigned char) 107 + ofRandom(10);
+        }
     }
     mask.update();
     mask.reloadTexture();
@@ -308,6 +314,9 @@ void incubusApp::messWithMask(){
 void incubusApp::addNewClient(int pos){
     connectedClients++;
     serial.writeByte(4);
+    mask.getPixelsRef()[pos*4] = (unsigned char) 163;
+    mask.getPixelsRef()[pos*4+1] = (unsigned char) 217;
+    mask.getPixelsRef()[pos*4+2] = (unsigned char) 216;
     mask.getPixelsRef()[pos*4+3] = (unsigned char) 255;
     //mask.getPixelsRef()[pos*4+3] = (unsigned char) 0;
     mask.update();
