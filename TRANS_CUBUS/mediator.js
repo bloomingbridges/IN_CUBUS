@@ -49,11 +49,20 @@ socket.on('open', function() {
 socket.on('message', function(msg, flags) {
 	var data = JSON.parse(msg);
 	if (data.created) {
+
 		if (udp) udpSendMessage(new Buffer("HAI:"+data.created));
 		console.log('Client created at: ' + data.created);
+
 	} else if (data.left) {
+
 		if (udp) udpSendMessage(new Buffer("BAI:"+data.left));
 		console.log('Client at #' + data.left + " has disappeared.");
+
+	} else if (data.visiting) {
+
+		if (udp) udpSendMessage(new Buffer("GET:"+data.visiting));
+		console.log('Facebook user ' + data.visiting + " is visiting.");
+
 	}
 	else {
 		console.log('Received: ' + msg);

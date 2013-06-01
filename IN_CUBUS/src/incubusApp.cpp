@@ -75,6 +75,12 @@ void incubusApp::update(){
             removeClient(atoi(data[1].c_str()));
         else if (data[0] == "ERR")
             serial.writeByte(3);
+        else if (data[0] == "GET") {
+            ofImage* img = new ofImage();
+            avatars.push_back(img);
+            loader.loadFromURL(avatars.back(), "http://graph.facebook.com/"+data[1]+"/picture?type=square");
+            loader.startThread(false, false);
+        }
     }
     
 }
@@ -147,6 +153,10 @@ void incubusApp::draw(){
         debugLabel += " // DEGREES: " + ofToString(cameraRotation);
         debugLabel += (recording) ? " // CAPTURING" : "";
         ofDrawBitmapString(debugLabel , 40, 866);
+        // draw loaded avatars
+        for (int i=0; i<avatars.size(); i++) {
+            avatars.at(i)->draw(i*50, 0, 50, 50);
+        }
     }
     
 }
@@ -234,5 +244,5 @@ void incubusApp::removeClient(int pos){
     mask.getPixelsRef()[pos*4+3] = (unsigned char) 255;
     mask.update();
     if (connectedClients == 0)
-        serial.writeByte(0);
+        serial.writeByte(4);
 }

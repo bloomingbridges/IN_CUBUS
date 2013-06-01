@@ -5,7 +5,7 @@ sleep 1s
 node ./TRANS_CUBUS/churn.js &
 node ./TRANS_CUBUS/mediator.js &
 
-while true; do
-	phantomjs ./TRANS_CUBUS/ghost.js
-	sleep 3m
-done
+# while true; do
+# 	phantomjs ./TRANS_CUBUS/ghost.js
+# 	sleep 3m
+# done

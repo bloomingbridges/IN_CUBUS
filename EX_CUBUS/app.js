@@ -21,6 +21,7 @@ var app = express()
 	, server = http.createServer(app)
 	, credentials = {}
   , clients = []
+  , clientHistory = []
 	, socket
 	, mediator
 	, upstream
@@ -93,10 +94,13 @@ function setupExpressApp() {
 
 	app.post('/', fb.loginRequired(), function(req,res) {
 		req.facebook.api('/me', function(err, user) {
+			if (clientHistory.indexOf(user.username) === -1) {
+				clientHistory.push(user.username);
+				if (mediator) mediator.send(JSON.stringify({visiting:user.username}));
+			}
 			res.render('index', { 
 				title: app.get('title'),
-				port: app.get('port'),
-				me: user
+				port: app.get('port')
 			});
 		});
 	});
@@ -266,7 +270,11 @@ function indexToCoordinates(index) {
 function grabPixelArrayForPosition(position) {
 	var array = [];
 	for (var i = 0; i < 359; i++) {
-		array.push({r:128, g:121, b:107});
+		var randR = 47 + Math.floor(Math.random() * 60);
+    var randG = 84 + Math.floor(Math.random() * 40);
+    var randB = 107 + Math.floor(Math.random() * 10);
+    array.push({r:randR, g:randG, b:randB});
+		//array.push({r:128, g:121, b:107});
 	}
 	return array;
 }

@@ -33,7 +33,8 @@ function fitPixel() {
 }
 
 function startPlayback() {
-	timer = window.setInterval(updatePixel, 1000/60);
+	timer = window.setInterval(updatePixel, 1000/30);
+	pixel.addClass('playback');
 }
 
 function updatePixel() {

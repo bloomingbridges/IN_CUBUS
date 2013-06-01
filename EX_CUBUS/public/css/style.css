@@ -29,6 +29,10 @@ a:hover, a:active {
 	transform: translate(0,0);
 }
 
+#pixel.playback {
+	-webkit-transition: 0s background-color linear;
+}
+
 #pixel.connecting {
 	background-color: #A3D9D8;
 	-webkit-transition: 0.3s background-color linear;

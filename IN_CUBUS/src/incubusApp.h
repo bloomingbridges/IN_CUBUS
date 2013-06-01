@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxNetwork.h"
+#include "ofxThreadedImageLoader.h"
 
 class incubusApp : public ofBaseApp{
 
@@ -38,5 +39,7 @@ class incubusApp : public ofBaseApp{
         ofLight lightSource;
         ofxUDPManager udpConnection;
         ofSerial serial;
+        ofxThreadedImageLoader loader;
+        vector<ofImage*> avatars;
 		
 };

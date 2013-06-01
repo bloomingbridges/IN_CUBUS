@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5C357D78175973A0008E4F7D /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5C357D731759718E008E4F7D /* icon.icns */; };
+		5C9E6900175985B400EF8626 /* ofxThreadedImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E68FE175985B400EF8626 /* ofxThreadedImageLoader.cpp */; };
 		85c72f17dc565a0ebb35c898d9f1ff56 /* ofxTCPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0b979fb889c23083171ae1952bbcb2c1 /* ofxTCPServer.cpp */; };
 		88e4aa203efa2cceedfdc708f1d61311 /* ofxUDPManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = c580e15d58b78ae62a46fc7b107e6b9b /* ofxUDPManager.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
@@ -71,6 +72,8 @@
 		3962d4d9ac4348d8aa0a133c29dd6b54 /* ofxUDPManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxUDPManager.h; path = ../../../../Developer/of_v0073_osx_release/addons/ofxNetwork/src/ofxUDPManager.h; sourceTree = SOURCE_ROOT; };
 		4c3deedafb0f301f5c2d972124426a58 /* ofxTCPClient.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxTCPClient.cpp; path = ../../../../Developer/of_v0073_osx_release/addons/ofxNetwork/src/ofxTCPClient.cpp; sourceTree = SOURCE_ROOT; };
 		5C357D731759718E008E4F7D /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
+		5C9E68FE175985B400EF8626 /* ofxThreadedImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxThreadedImageLoader.cpp; sourceTree = "<group>"; };
+		5C9E68FF175985B400EF8626 /* ofxThreadedImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxThreadedImageLoader.h; sourceTree = "<group>"; };
 		9d78ee1ab94c4df789897d9e2b45a1c0 /* ofxTCPClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxTCPClient.h; path = ../../../../Developer/of_v0073_osx_release/addons/ofxNetwork/src/ofxTCPClient.h; sourceTree = SOURCE_ROOT; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../../Developer/of_v0073_osx_release/libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../../Developer/of_v0073_osx_release/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -163,9 +166,27 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		5C9E68FC1759857800EF8626 /* ofxThreadedImageLoader */ = {
+			isa = PBXGroup;
+			children = (
+				5C9E68FD175985AB00EF8626 /* src */,
+			);
+			name = ofxThreadedImageLoader;
+			sourceTree = "<group>";
+		};
+		5C9E68FD175985AB00EF8626 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				5C9E68FE175985B400EF8626 /* ofxThreadedImageLoader.cpp */,
+				5C9E68FF175985B400EF8626 /* ofxThreadedImageLoader.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				5C9E68FC1759857800EF8626 /* ofxThreadedImageLoader */,
 				18240ecce4076fb0833a8578697ffa74 /* ofxNetwork */,
 			);
 			name = addons;
@@ -353,6 +374,7 @@
 				fe8e83051ae56d7aaf96c7923403af55 /* ofxTCPManager.cpp in Sources */,
 				85c72f17dc565a0ebb35c898d9f1ff56 /* ofxTCPServer.cpp in Sources */,
 				88e4aa203efa2cceedfdc708f1d61311 /* ofxUDPManager.cpp in Sources */,
+				5C9E6900175985B400EF8626 /* ofxThreadedImageLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
