@@ -22,7 +22,7 @@ udp.on("message", function (msg, rinfo) {
 
 udp.on("listening", function () {
   var address = udp.address();
-  console.log("\n### Mediator is awaiting instructions\n");
+  console.log("\n### Mediator is awaiting instructions");
 });
 
 function udpSendMessage(buffer) {
@@ -42,7 +42,7 @@ socket = new WebSocket('ws://incubus-7783.onmodulus.net/notifications');
 //socket = new WebSocket('ws://localhost:3000/notifications');
 
 socket.on('open', function() {
-  console.log("Listening for changes..");
+  console.log("### Mediator is listening for changes\n");
   if (udp) udpSendMessage(new Buffer("NEW:SESSION"));
 });
 

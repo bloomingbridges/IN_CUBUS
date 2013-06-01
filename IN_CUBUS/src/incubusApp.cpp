@@ -4,14 +4,15 @@
 void incubusApp::setup(){
     
     fbo.allocate(320, 180);
+    ofDisableArbTex();
+    mask.allocate(50,50,OF_IMAGE_COLOR_ALPHA);
+    mask.setUseTexture(true);
+    resetMask(true);
     
-    mask.allocate(320,180,OF_IMAGE_COLOR_ALPHA);
-    resetMask(false);
-    
-    ofSetSmoothLighting(true);
+    //ofSetSmoothLighting(true);
     lightSource.enable();
     lightSource.setPointLight();
-    lightSource.setPosition(160, 90, -10);
+    lightSource.setPosition(160, 180, 0);
     ofSetGlobalAmbientColor(ofFloatColor(127,127,127));
                                 
     ofSetVerticalSync(true);
@@ -34,6 +35,8 @@ void incubusApp::setup(){
         serialPort = deviceList[5].getDeviceName();
         wired = serial.setup(5,9600);
     }
+    
+    qrCode.loadImage("qrcode.png");
     
     ofToggleFullscreen();
     
@@ -75,36 +78,12 @@ void incubusApp::update(){
             removeClient(atoi(data[1].c_str()));
         else if (data[0] == "ERR")
             serial.writeByte(3);
-        else if (data[0] == "GET") {
-            ofImage* img = new ofImage();
-            avatars.push_back(img);
-            loader.loadFromURL(avatars.back(), "http://graph.facebook.com/"+data[1]+"/picture?type=square");
-            loader.startThread(false, false);
-        }
     }
     
 }
 
 //--------------------------------------------------------------
 void incubusApp::draw(){
-    
-    fbo.begin();
-    
-    ofBackground(244,239,252);
-    
-    ofPushMatrix();
-    ofNoFill();
-    ofSetLineWidth(1);
-    ofSetColor(222,216,226);
-    ofTranslate(160, 90);
-    ofRotateY((float) degrees);
-    ofFill();
-    //lightSource.enable();
-    ofBox(0, 0, 0, 100);
-    //lightSource.disable();
-    ofPopMatrix();
-    
-    fbo.end();
     
     if (recording) {
         //snapshot.grabScreen(0,0,320,180);
@@ -123,18 +102,19 @@ void incubusApp::draw(){
         ofScale(factor, factor);
     }
     
+    drawCube(false);
+    
     ofSetMinMagFilters(GL_NEAREST, GL_NEAREST);
-    fbo.draw(0.f, 0.f);
+//    fbo.draw(0.f, 0.f);
     
 //    int p = (int) ofRandom(57600);
 //    mask.getPixelsRef()[p*4+3] = (unsigned char) 0;
 //    mask.update();
     
-    if (!unmasked) {
-        ofEnableAlphaBlending();
-        mask.draw(0, 0);
-        ofDisableAlphaBlending();
-    }
+    ofSetColor(255, 255, 255);
+    ofRect(0, 0, 140, 1080);
+    
+    qrCode.draw(4, 4, 50, 50);
     
     //ofSetColor(171,243,172);
     //ofRect(159, 89, 4, 4);
@@ -152,11 +132,10 @@ void incubusApp::draw(){
         debugLabel += (dioderProg.length() > 0) ? " // CUBE ROUTINE: " + dioderProg : "";
         debugLabel += " // DEGREES: " + ofToString(cameraRotation);
         debugLabel += (recording) ? " // CAPTURING" : "";
-        ofDrawBitmapString(debugLabel , 40, 866);
-        // draw loaded avatars
-        for (int i=0; i<avatars.size(); i++) {
-            avatars.at(i)->draw(i*50, 0, 50, 50);
-        }
+        ofDrawBitmapString(debugLabel , 90, 866);
+        ofEnableAlphaBlending();
+        mask.draw(20, ofGetScreenHeight() - 64, 50, 50);
+        ofDisableAlphaBlending();
     }
     
 }
@@ -219,6 +198,31 @@ void incubusApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
+void incubusApp::drawCube(bool toBuffer){
+    if (toBuffer) fbo.begin();
+    ofBackground(244,239,252);
+    glEnable(GL_DEPTH_TEST);
+    ofPushMatrix();
+    ofNoFill();
+    ofSetLineWidth(1);
+    ofSetColor(222,216,226);
+    ofTranslate(230, 90);
+    ofRotateY((float) degrees);
+    
+    lightSource.enable();
+    ofBox(0, 0, 0, 100);
+    
+    ofFill();
+    ofEnableAlphaBlending();
+    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    ofDisableAlphaBlending();
+    lightSource.disable();
+    glDisable(GL_DEPTH_TEST);
+    ofPopMatrix();
+    if (toBuffer) fbo.end();
+}
+
+//--------------------------------------------------------------
 void incubusApp::resetMask(bool noisy){
     int i = 0;
     for( i=0; i < mask.getPixelsRef().size(); i+=4) {
@@ -234,15 +238,19 @@ void incubusApp::resetMask(bool noisy){
 void incubusApp::addNewClient(int pos){
     connectedClients++;
     serial.writeByte(4);
+    //mask.getPixelsRef()[pos*4] = (unsigned char) 255;
     mask.getPixelsRef()[pos*4+3] = (unsigned char) 0;
     mask.update();
+    mask.reloadTexture();
 }
 
 //--------------------------------------------------------------
 void incubusApp::removeClient(int pos){
     connectedClients--;
+    //mask.getPixelsRef()[pos*4] = (unsigned char) 31;
     mask.getPixelsRef()[pos*4+3] = (unsigned char) 255;
     mask.update();
+    mask.reloadTexture();
     if (connectedClients == 0)
         serial.writeByte(4);
 }

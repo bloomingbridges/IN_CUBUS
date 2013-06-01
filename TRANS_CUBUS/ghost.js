@@ -5,14 +5,14 @@ var address = 'incubus.bloomingbridges.co.uk/'
 function establishSocketConnection() {
 	var socket = new WebSocket('ws://'+address);
 	socket.onopen = function(event) {
-		console.log("Boo!");
+		console.log("👻");
 	}
 	socket.onmessage = function(event) {
-		console.log("Lingering..");
+		//console.log("Lingering..");
 		timeOut = setTimeout(function() {
-			console.log("Dissolving..");
+			console.log("=👻");
 			phantom.exit();
-		}, 3000 + (Math.random() * 11700));
+		}, 6000 + (Math.random() * 46800));
 	}
 }
 

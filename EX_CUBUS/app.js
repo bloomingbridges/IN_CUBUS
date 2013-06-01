@@ -294,7 +294,7 @@ function indexToCoordinates(index) {
 
 function grabPixelArrayForPosition(position) {
 	var array = [];
-	for (var i = 0; i < 359; i++) {
+	for (var i = 0; i < (WIDTH*HEIGHT); i++) {
 		var randR = 47 + Math.floor(Math.random() * 60);
     var randG = 84 + Math.floor(Math.random() * 40);
     var randB = 107 + Math.floor(Math.random() * 10);

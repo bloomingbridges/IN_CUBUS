@@ -1,11 +1,30 @@
 #!/bin/bash
 
+clear
+echo 
+echo "### STARTING IN//CUBUS"
 open ./IN_CUBUS/bin/IN_CUBUSDebug.app
 sleep 1s
-node ./TRANS_CUBUS/churn.js &
+# node ./TRANS_CUBUS/churn.js &
 node ./TRANS_CUBUS/mediator.js &
 
-# while true; do
-# 	phantomjs ./TRANS_CUBUS/ghost.js
-# 	sleep 3m
-# done
+while true; do
+	sleep 3s
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	sleep 15s
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	sleep 25s
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	sleep 25s
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	sleep 16s
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	sleep 45s
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	sleep 5s
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	sleep 60s
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	sleep 8s
+	phantomjs ./TRANS_CUBUS/ghost.js &
+done

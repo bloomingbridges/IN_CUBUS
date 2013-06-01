@@ -16,6 +16,7 @@ class incubusApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void gotMessage(ofMessage msg);
     
+        void drawCube(bool toBuffer);
         void resetMask(bool noisy);
         void addNewClient(int pos);
         void removeClient(int pos);
@@ -39,7 +40,6 @@ class incubusApp : public ofBaseApp{
         ofLight lightSource;
         ofxUDPManager udpConnection;
         ofSerial serial;
-        ofxThreadedImageLoader loader;
-        vector<ofImage*> avatars;
+        ofImage qrCode;
 		
 };
