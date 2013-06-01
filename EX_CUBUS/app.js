@@ -16,6 +16,11 @@ var fs = require('fs')
 var User, Pixel;
 
 
+// Constants ///////////////////////////////////////////////////////////////////
+
+var WIDTH = HEIGHT = 50;
+
+
 // Globals /////////////////////////////////////////////////////////////////////
 
 var app = express()
@@ -97,7 +102,7 @@ function setupExpressApp() {
 		var options = {title: app.get('title'), port: app.get('port'), me: ""};
 		req.facebook.api('/me', function(err, user) {
 			if (clientHistory.indexOf(user.username) === -1) {
-				clientHistory.push(user.username);
+				//clientHistory.push(user.username);
 				//if (mediator) mediator.send(JSON.stringify({visiting:user.username}));
 				options.me = user.username;
 			}
@@ -144,7 +149,7 @@ function onConnection(client) {
   } else {
 
   	console.log("NEW CONNECTION!");
-  	var newPosition = allocateNewRandomPosition();
+  	var newPosition = allocateNewRandomPosition(false);
 	  var pixelArray = grabPixelArrayForPosition(newPosition);
 	  var data = {position: indexToCoordinates(newPosition), pixels: pixelArray};
 	  client.send(JSON.stringify(data));
@@ -152,6 +157,21 @@ function onConnection(client) {
 	  var newUser = new User({position:newPosition, authenticated:false});
 	  newUser.save(onSavedToMongoDB);
 	  client.id = newPosition;
+	  client.on('message', function(msg) {
+	  	msg = JSON.parse(msg);
+	  	if (msg.avatar) {
+	  		console.log('#'+client.id+" says: "+msg.avatar);
+	  		client.send(JSON.stringify({request:"PIXELS PLEASE!"}));
+	  	}
+	  	else if (msg.collection) {
+	  		console.log("Received potential pixels from #"+client.id);
+	  		console.log("Amount: " + msg.collection.length);
+	  	}
+	  });
+	  // client.on('data', function(data) {
+	  // 	console.log("Received potential pixels from #"+client.id);
+	  // 	console.log(data.length);
+	  // });
 	  client.on('close', function() {
 	  	if (mediator) mediator.send(JSON.stringify({left:client.id}));
 	  	console.log('#' + client.id + " has left.");
@@ -208,18 +228,23 @@ function onIncomingStream(message) {
 
 // Helpers /////////////////////////////////////////////////////////////////////
 
-function allocateNewRandomPosition() {
+function allocateNewRandomPosition(leaveGaps) {
 	var success, position, filledPositions;
 	while (!success) {
 		filledPositions = clients;
 		//console.log("OCCUPIED POSITIONS: ");
 		//console.log(filledPositions);
-		position = 319 + Math.floor(Math.random() * (318*180));
-		if (filledPositions.indexOf(position) === -1) {
-			if (hasDistanceFromEdge(position)) {
-				success = hasNoImmediateNeighbours(position, filledPositions);
+		if (leaveGaps) {
+			position = (WIDTH-1) + Math.floor(Math.random() * ((WIDTH-2)*HEIGHT));
+			if (filledPositions.indexOf(position) === -1) {
+				if (hasDistanceFromEdge(position)) {
+					success = hasNoImmediateNeighbours(position, filledPositions);
+				}
 			}
-		}
+	  } else {
+	  	position = Math.floor(Math.random() * ( WIDTH * HEIGHT ));
+	  	success = (filledPositions.indexOf(position) === -1);
+	  }
 	}
 	return position;
 }
@@ -233,7 +258,7 @@ function getOccupiedPixels() {
 }
 
 function hasDistanceFromEdge(position) {
-	return (position % 320 !== 0 && position % 319 !== 0) ? true : false;
+	return (position % WIDTH !== 0 && position % (WIDTH-1) !== 0) ? true : false;
 }
 
 function hasNoImmediateNeighbours(position, occupied) {
@@ -261,8 +286,8 @@ function hasNoImmediateNeighbours(position, occupied) {
 
 function indexToCoordinates(index) {
 	var x, y;
-	y = Math.floor(index / 320);
-	x = index - (y * 320);
+	y = Math.floor(index / WIDTH);
+	x = index - (y * WIDTH);
 	console.log(index + " -> X: " + x + ", Y: " + y);
 	return {x:x, y:y};
 }

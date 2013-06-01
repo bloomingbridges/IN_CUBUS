@@ -1,11 +1,14 @@
 
 var pixel
 	, pixelValues = ["#A3D9D8"]
+	, myPixels
 	, avatar
+	, cnvs
 	, index = 0
 	, timer
 	, socket
-	, spazz = false;
+	, spazz = false
+	, synching = false;
 
 $(document).ready(function() {
 	$('#help').hide();
@@ -37,11 +40,40 @@ function fitPixel() {
 
 function loadAvatar(user) {
 	avatar = new Image();
+	avatar.crossOrigin = '';
 	avatar.src = "http://graph.facebook.com/"+user+"/picture?type=square";
 	avatar.onload = function() {
-		console.log("Avatar has been loaded successfully.");
-		$('#help').append(avatar);
+		//console.log("Avatar has been loaded successfully.");
+		cnvs = document.createElement('canvas');
+		cnvs.width = 50;
+		cnvs.height = 50;
+		cnvs.id = "workbench";
+		$("#container").append(cnvs);
+		var ctx = cnvs.getContext('2d');
+		ctx.drawImage(avatar, 0, 0);
+		var p = ctx.getImageData(0,0,50,50);
+		//console.log("Pixel #1: R: " + p.data[0] + ", G: " + p.data[1] + ", B: " + p.data[2]);
+		var msg = JSON.stringify({avatar:"ready"});
+		socket.send(msg);
 	};
+}
+
+function processAvatar() {
+	var ctx = cnvs.getContext('2d')
+	  , p = 0
+	  , pxls
+	  , pixels = {collection:[], owner: me}
+	  , pixel = {};
+
+	pxls = ctx.getImageData(0,0,50,50);
+	for (var i=0; i<50*50*4; i+=4) {
+		pixel = { position: p, r: pxls.data[i], g: pxls.data[i+1], b: pxls.data[i+2]};
+	    pixels.collection.push(pixel);
+	    p++;
+	}
+	console.log("Sending over pixel data..");
+	myPixels = JSON.stringify(pixels);
+	socket.send(myPixels);
 }
 
 function startPlayback() {
@@ -83,6 +115,8 @@ function setupSocket() {
 			setTimeout(300, function() {
 				$('#pixel').removeClass('connecting');
 			});
+		} else if (data.request) {
+			processAvatar();
 		}
 	};
 

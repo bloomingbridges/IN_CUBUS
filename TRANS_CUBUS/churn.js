@@ -19,6 +19,8 @@ var User = require('../EX_CUBUS/models.js').User
 // Globals /////////////////////////////////////////////////////////////////////
 
 var credentials = {}
+  , WIDTH = 50
+  , HEIGHT = 50
   , churning = false
   , queue = []
   , churn = []
@@ -137,7 +139,7 @@ function checkForJobs() {
 function spawnWorker(job) {
   if (queue.indexOf(job.step) === -1)
     console.log("PROCESSING [" + job.step + "]");
-  var cnvs = new canvas(320,180)
+  var cnvs = new canvas(WIDTH,HEIGHT)
     , ctx = cnvs.getContext('2d')
     , img = new canvas.Image;
   img.src = job.data;
@@ -145,7 +147,7 @@ function spawnWorker(job) {
   var pData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
   var pixels = [];
   var pixel = {};
-  for (var i=0; i<(320*180*4); i+=4) {
+  for (var i=0; i<(WIDTH*HEIGHT*4); i+=4) {
     pixel = { step: job.step, position: i, r: pData.data[i], g: pData.data[i+1], b: pData.data[i+2]};
     //console.log(pixel);
     pixels.push(pixel);
