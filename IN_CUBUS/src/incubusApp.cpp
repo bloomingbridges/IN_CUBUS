@@ -12,7 +12,7 @@ void incubusApp::setup(){
     ofSetSmoothLighting(true);
     lightSource.enable();
     lightSource.setPointLight();
-    lightSource.setPosition(160, 180, 0);
+    lightSource.setPosition(140, 180, -10);
     ofSetGlobalAmbientColor(ofFloatColor(127,127,127));
                                 
     ofSetVerticalSync(true);
@@ -140,7 +140,7 @@ void incubusApp::draw(){
             ofScale(0.73, 0.73);
         }
         ofSetColor(239, 207, 162);
-        accessText.drawCenter(420, 20);
+        accessText.drawCenter(420, 920);
 //        onRamp.drawString("No QR-code scanner at hand?" , 32, 920);
 //        ofSetColor(64, 61, 54);
 //        onRamp.drawString("Search for IN//CUBUS on facebook or" , 32, 950);
@@ -234,14 +234,20 @@ void incubusApp::drawCube(bool toBuffer){
     
     glEnable(GL_DEPTH_TEST);
     ofPushMatrix();
-    ofNoFill();
-    ofSetLineWidth(1);
-    //ofSetColor(222,216,226);
-    ofSetColor(183, 237, 219);
+    
     ofTranslate(230, 90);
     ofRotateY((float) degrees);
     
     lightSource.enable();
+    
+    ofFill();
+    ofSetLineWidth(0);
+    ofSetColor(222,216,226);
+    ofBox(0, 110, 0, 120);
+    
+    ofNoFill();
+    ofSetLineWidth(1);
+    ofSetColor(183, 237, 219);
     ofBox(0, 0, 0, 100);
     
     ofFill();
