@@ -212,9 +212,9 @@ void incubusApp::gotMessage(ofMessage msg){
 void incubusApp::resetMask(bool noisy){
     int i = 0;
     for( i=0; i < mask.getPixelsRef().size(); i+=4) {
-        mask.getPixelsRef()[i]   = (unsigned char) (noisy) ? ofRandom(47) : 47;
-        mask.getPixelsRef()[i+1] = (unsigned char) (noisy) ? ofRandom(84) : 84;
-        mask.getPixelsRef()[i+2] = (unsigned char) (noisy) ? ofRandom(107) : 107;
+        mask.getPixelsRef()[i]   = (unsigned char) (noisy) ? ofRandom(47) : 31;
+        mask.getPixelsRef()[i+1] = (unsigned char) (noisy) ? ofRandom(84) : 46;
+        mask.getPixelsRef()[i+2] = (unsigned char) (noisy) ? ofRandom(107) : 103;
         mask.getPixelsRef()[i+3] = (unsigned char) 255;
     }
     mask.update();
