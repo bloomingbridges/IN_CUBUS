@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxNetwork.h"
-#include "ofxThreadedImageLoader.h"
+#include "ofxTextSuite.h"
 
 class incubusApp : public ofBaseApp{
 
@@ -40,7 +40,10 @@ class incubusApp : public ofBaseApp{
         ofLight lightSource;
         ofxUDPManager udpConnection;
         ofSerial serial;
+    
         ofImage qrCode;
         ofTrueTypeFont onRamp;
+        ofxTextBlock infoText;
+        ofxTextBlock accessText;
 		
 };

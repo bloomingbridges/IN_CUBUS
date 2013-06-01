@@ -37,7 +37,18 @@ void incubusApp::setup(){
     }
     
     qrCode.loadImage("qrcode.png");
-    onRamp.loadFont("ONRAMP.ttf", 28);
+    accessText.init("ONRAMP.ttf", 28);
+    accessText.setText("No QR-code scanner at hand? \n Search for IN//CUBUS on facebook or navigate to \n apps.facebook.com/in_cubus manually. \n \n Not a facebook user? Don't worry, you can still participate by heading to \n incubus.bloomingbridges.co.uk");
+    accessText.wrapTextX(720);
+    accessText.setColor(64, 61, 54, 255);
+    accessText.words[14].color = ofColor(239, 207, 162, 255);
+    accessText.words[18].color = ofColor(239, 207, 162, 255);
+    accessText.words[26].color = ofColor(239, 207, 162, 255);
+    accessText.words[30].color = ofColor(239, 207, 162, 255);
+    accessText.words[32].color = ofColor(239, 207, 162, 255);
+    accessText.words[34].color = ofColor(239, 207, 162, 255);
+    accessText.words[36].color = ofColor(239, 207, 162, 255);
+    accessText.words[56].color = ofColor(239, 207, 162, 255);
     
     ofToggleFullscreen();
     
@@ -129,16 +140,17 @@ void incubusApp::draw(){
             ofScale(0.73, 0.73);
         }
         ofSetColor(239, 207, 162);
-        onRamp.drawString("No QR-code scanner at hand?" , 32, 920);
-        ofSetColor(64, 61, 54);
-        onRamp.drawString("Search for IN//CUBUS on facebook or" , 32, 950);
-        onRamp.drawString("navigate to apps.facebook.com/in_cubus manually." , 32, 980);
-        
-        ofSetColor(239, 207, 162);
-        onRamp.drawString("Not a facebook user? Don't worry, " , 32, 1040);
-        ofSetColor(64, 61, 54);
-        onRamp.drawString("you can still participate by heading to" , 32, 1070);
-        onRamp.drawString("incubus.bloomingbridges.co.uk" , 32, 1100);
+        accessText.drawCenter(420, 20);
+//        onRamp.drawString("No QR-code scanner at hand?" , 32, 920);
+//        ofSetColor(64, 61, 54);
+//        onRamp.drawString("Search for IN//CUBUS on facebook or" , 32, 950);
+//        onRamp.drawString("navigate to apps.facebook.com/in_cubus manually." , 32, 980);
+//        
+//        ofSetColor(239, 207, 162);
+//        onRamp.drawString("Not a facebook user? Don't worry, " , 32, 1040);
+//        ofSetColor(64, 61, 54);
+//        onRamp.drawString("you can still participate by heading to" , 32, 1070);
+//        onRamp.drawString("incubus.bloomingbridges.co.uk" , 32, 1100);
         if (debug) ofPopMatrix();
     }
     
@@ -219,11 +231,13 @@ void incubusApp::gotMessage(ofMessage msg){
 void incubusApp::drawCube(bool toBuffer){
     if (toBuffer) fbo.begin();
     ofBackground(244,239,252);
+    
     glEnable(GL_DEPTH_TEST);
     ofPushMatrix();
     ofNoFill();
     ofSetLineWidth(1);
-    ofSetColor(222,216,226);
+    //ofSetColor(222,216,226);
+    ofSetColor(183, 237, 219);
     ofTranslate(230, 90);
     ofRotateY((float) degrees);
     
@@ -232,6 +246,7 @@ void incubusApp::drawCube(bool toBuffer){
     
     ofFill();
     ofEnableAlphaBlending();
+    ofSetColor(255,255,255);
     mask.getTextureReference().draw(-50, -50, 50, 100, 100);
     ofDisableAlphaBlending();
     lightSource.disable();
