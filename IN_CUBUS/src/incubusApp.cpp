@@ -12,7 +12,7 @@ void incubusApp::setup(){
     ofSetSmoothLighting(true);
     lightSource.enable();
     lightSource.setPointLight();
-    lightSource.setPosition(140, 180, -10);
+    lightSource.setPosition(150, 200, 100);
     ofSetGlobalAmbientColor(ofFloatColor(127,127,127));
                                 
     ofSetVerticalSync(true);
@@ -246,13 +246,23 @@ void incubusApp::drawCube(bool toBuffer){
     ofBox(0, 110, 0, 120);
     
     ofNoFill();
-    ofSetLineWidth(1);
-    ofSetColor(183, 237, 219);
+    ofSetLineWidth(2);
+    //ofSetColor(183, 237, 219);
+    ofSetColor(47, 84, 107);
     ofBox(0, 0, 0, 100);
     
     ofFill();
     ofEnableAlphaBlending();
-    ofSetColor(255,255,255);
+    ofSetColor(255,255,255,200);
+    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    ofRotateY(90);
+    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    ofRotateY(90);
+    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    ofRotateY(90);
+    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    ofRotateX(90);
+    ofSetColor(255,255,255,255);
     mask.getTextureReference().draw(-50, -50, 50, 100, 100);
     ofDisableAlphaBlending();
     lightSource.disable();
