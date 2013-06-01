@@ -18,6 +18,7 @@ class incubusApp : public ofBaseApp{
     
         void drawCube(bool toBuffer);
         void resetMask(bool noisy);
+        void messWithMask();
         void addNewClient(int pos);
         void removeClient(int pos);
     
@@ -35,6 +36,7 @@ class incubusApp : public ofBaseApp{
         string incomingBytes;
         ofImage snapshot;
         ofImage mask;
+        ofTexture* maskTex;
         ofFbo fbo;
         ofEasyCam camera;
         ofLight lightSource;

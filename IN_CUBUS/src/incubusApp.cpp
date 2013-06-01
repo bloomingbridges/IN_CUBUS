@@ -114,9 +114,9 @@ void incubusApp::draw(){
         ofScale(factor, factor);
     }
     
+    messWithMask();
     drawCube(false);
     
-    ofSetMinMagFilters(GL_NEAREST, GL_NEAREST);
 //    fbo.draw(0.f, 0.f);
     
 //    int p = (int) ofRandom(57600);
@@ -163,8 +163,8 @@ void incubusApp::draw(){
         string debugLabel = "DEBUG";
         debugLabel += (serialPort.length() > 0) ? " // SERIAL PORT: " + serialPort : "";
         debugLabel += (dioderProg.length() > 0) ? " // CUBE ROUTINE: " + dioderProg : "";
-        debugLabel += " // DEGREES: " + ofToString(cameraRotation);
-        debugLabel += (recording) ? " // CAPTURING" : "";
+        debugLabel += " // CONNECTED CLIENTS: " + ofToString(connectedClients);
+        debugLabel += (recording) ? " // DEGREES: " + ofToString(cameraRotation) + " // CAPTURING" : "";
         ofDrawBitmapString(debugLabel , 90, 866);
         ofEnableAlphaBlending();
         mask.draw(20, ofGetScreenHeight() - 64, 50, 50);
@@ -254,16 +254,18 @@ void incubusApp::drawCube(bool toBuffer){
     ofFill();
     ofEnableAlphaBlending();
     ofSetColor(255,255,255,200);
-    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    ofSetMinMagFilters(GL_NEAREST, GL_NEAREST);
+    maskTex = &mask.getTextureReference();
+    maskTex->draw(-50, -50, 50, 100, 100);
     ofRotateY(90);
-    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    maskTex->draw(-50, -50, 50, 100, 100);
     ofRotateY(90);
-    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    maskTex->draw(-50, -50, 50, 100, 100);
     ofRotateY(90);
-    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    maskTex->draw(-50, -50, 50, 100, 100);
     ofRotateX(90);
     ofSetColor(255,255,255,255);
-    mask.getTextureReference().draw(-50, -50, 50, 100, 100);
+    maskTex->draw(-50, -50, 50, 100, 100);
     ofDisableAlphaBlending();
     lightSource.disable();
     glDisable(GL_DEPTH_TEST);
@@ -281,6 +283,19 @@ void incubusApp::resetMask(bool noisy){
         mask.getPixelsRef()[i+3] = (unsigned char) 255;
     }
     mask.update();
+    mask.reloadTexture();
+}
+
+//--------------------------------------------------------------
+void incubusApp::messWithMask(){
+    int i = 0;
+    for( i=0; i < mask.getPixelsRef().size(); i+=4) {
+        mask.getPixelsRef()[i]   = (unsigned char) 47 + ofRandom(60);
+        mask.getPixelsRef()[i+1] = (unsigned char) 84 + ofRandom(40);
+        mask.getPixelsRef()[i+2] = (unsigned char) 107 + ofRandom(10);
+    }
+    mask.update();
+    mask.reloadTexture();
 }
 
 //--------------------------------------------------------------
