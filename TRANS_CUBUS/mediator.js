@@ -60,7 +60,7 @@ socket.on('message', function(msg, flags) {
 
 	} else if (data.visiting) {
 
-		if (udp) udpSendMessage(new Buffer("GET:"+data.visiting));
+		//if (udp) udpSendMessage(new Buffer("GET:"+data.visiting));
 		console.log('Facebook user ' + data.visiting + " is visiting.");
 
 	}

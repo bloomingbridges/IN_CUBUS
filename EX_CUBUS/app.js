@@ -4,6 +4,7 @@
 var fs = require('fs') 
 	, express = require('express')
 	, http = require('http')
+	, request = require('request')
 	, mongoose = require('mongoose')
 	, ws = require('websocket.io')
 	, fb = require('facebook-node-sdk');
@@ -93,15 +94,14 @@ function setupExpressApp() {
 	});
 
 	app.post('/', fb.loginRequired(), function(req,res) {
+		var options = {title: app.get('title'), port: app.get('port'), me: ""};
 		req.facebook.api('/me', function(err, user) {
 			if (clientHistory.indexOf(user.username) === -1) {
 				clientHistory.push(user.username);
-				if (mediator) mediator.send(JSON.stringify({visiting:user.username}));
+				//if (mediator) mediator.send(JSON.stringify({visiting:user.username}));
+				options.me = user.username;
 			}
-			res.render('index', { 
-				title: app.get('title'),
-				port: app.get('port')
-			});
+			res.render('index', options);
 		});
 	});
 

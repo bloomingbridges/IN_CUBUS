@@ -1,6 +1,7 @@
 
 var pixel
 	, pixelValues = ["#A3D9D8"]
+	, avatar
 	, index = 0
 	, timer
 	, socket
@@ -22,6 +23,8 @@ $(document).ready(function() {
 			fitPixel();
 		});	
 		setupSocket();
+		if (me.length > 0 && Modernizr.canvas)
+			loadAvatar(me);
 	} 
 });
 
@@ -30,6 +33,15 @@ function fitPixel() {
 		pixel.css('height', window.innerWidth);
 	else
 		pixel.css('height', pixel.css('width'));
+}
+
+function loadAvatar(user) {
+	avatar = new Image();
+	avatar.src = "http://graph.facebook.com/"+user+"/picture?type=square";
+	avatar.onload = function() {
+		console.log("Avatar has been loaded successfully.");
+		$('#help').append(avatar);
+	};
 }
 
 function startPlayback() {
@@ -65,8 +77,8 @@ function setupSocket() {
 		var data = JSON.parse(message.data);
 		if (data.position) {
 			pixelValues = data.pixels;
-			$('#info p:first-child').html("<p>You have been allocated<br />( X: <span>" 
-				+ data.position.x + "</span> | Y: <span>" 
+			$('#info p:first-child').html("<p>You have been allocated<br />( &Chi; <span>" 
+				+ data.position.x + "</span> | &Upsilon; <span>" 
 				+ data.position.y + '</span> )</p>');
 			setTimeout(300, function() {
 				$('#pixel').removeClass('connecting');
