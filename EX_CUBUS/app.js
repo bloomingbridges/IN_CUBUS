@@ -94,7 +94,14 @@ function setupExpressApp() {
 	app.get('/', function(req,res) {
 		res.render('index', { 
 			title: app.get('title'),
-			port: app.get('port') 
+			port: app.get('port'),
+			me: ""
+		});
+	});
+
+	app.get('/about', function(req,res) {
+		res.render('about', { 
+			title: app.get('title')
 		});
 	});
 

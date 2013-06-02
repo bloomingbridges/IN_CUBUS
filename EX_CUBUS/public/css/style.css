@@ -53,10 +53,29 @@ a:hover, a:active {
 	height: 27px;
 }
 
+#help h2, #help h3 {
+	color: rgb(239, 207, 162);
+	text-align: center;
+	display: block;
+	margin: 3em auto 0 auto;
+	text-transform: uppercase;
+}
+
 #help p {
 	color: rgb(128,121,107);
 	text-align: justify;
+	line-height: 1.5em;
 	margin: 2em 12px 1em 12px;
+}
+
+#help hr {
+	border: none;
+	height: 57px;
+	background: transparent url(../apple-touch-icon-57x57-precomposed.png) no-repeat center center;
+}
+
+#help footer p {
+	font-size: small;
 }
 
 #info {
@@ -104,7 +123,7 @@ a:hover, a:active {
 
 }
 
-@media only screen and (min-width : 1000px) {
+@media only screen and (min-width : 800px) {
 	
 	body {
 		/*min-height: 1127px;*/
@@ -121,6 +140,10 @@ a:hover, a:active {
 
 	#help {
 		width: 100%;
+	}
+
+	#help footer p {
+		text-align: center;
 	}
 
 }
