@@ -4,7 +4,6 @@
 var fs = require('fs') 
 	, express = require('express')
 	, http = require('http')
-	, request = require('request')
 	, mongoose = require('mongoose')
 	, ws = require('websocket.io')
 	, fb = require('facebook-node-sdk');
@@ -30,6 +29,7 @@ var app = express()
   , clientHistory = []
 	, socket
 	, mediator
+	, flushTimer = null
 	, upstream
 	, bServer
 	, db;
@@ -151,6 +151,7 @@ function onConnection(client) {
   } else if (client.req.url === '/notifications') {
 
   	console.log("HELLO MEDIATOR!");
+  	client.on('message', onMediatorMessage);
   	mediator = client;
 
   } else {
@@ -230,6 +231,32 @@ function onIncomingStream(message) {
 			});
 		};
 	}
+}
+
+function onMediatorMessage(message) {
+	var msg = JSON.parse(message);
+	if (msg.cmd && msg.cmd === "FLUSH") {
+		if (flushTimer === null) {
+			console.log("!!! About to drop the database. Send again to cancel.");
+			flushTimer = setTimeout(flushDatabase, 10000);
+		} else {
+			clearInterval(flushTimer);
+			flushTimer = null;
+			console.log("!!! Database flush aborted.");
+		}
+	}
+}
+
+function flushDatabase() {
+	Pixel.remove({}, onDBFlushError);
+	User.remove({}, onDBFlushError);
+	flushTimer = null;
+	console.log("!!! Database empty?");
+	mediator.send(JSON.stringify({confirmation:"DB has been emptied!"}));
+}
+
+function onDBFlushError(error) {
+	if (error) console.log(error);
 }
 
 

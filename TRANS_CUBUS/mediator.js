@@ -18,6 +18,10 @@ var udp = dgram.createSocket('udp4')
 udp.on("message", function (msg, rinfo) {
   console.log("Receiving: " + msg + " from " +
     rinfo.address + ":" + rinfo.port);
+  if (msg == "FLUSH") {
+  	console.log("Received order to flush the database.");
+  	socket.send(JSON.stringify({cmd:"FLUSH"}));
+  }
 });
 
 udp.on("listening", function () {

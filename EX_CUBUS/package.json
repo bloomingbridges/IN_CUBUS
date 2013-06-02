@@ -8,8 +8,7 @@
     "jade": "*",
     "mongoose": "*",
     "websocket.io": "*",
-    "facebook-node-sdk": "*",
-    "request":"*"
+    "facebook-node-sdk": "*"
   },
   "engines": {
     "node":"0.8.15"
