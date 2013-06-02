@@ -11,6 +11,32 @@ node ./TRANS_CUBUS/mediator.js &
 while true; do
 	sleep 3s
 	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
+	phantomjs ./TRANS_CUBUS/ghost.js &
 	sleep 15s
 	phantomjs ./TRANS_CUBUS/ghost.js &
 	sleep 25s
