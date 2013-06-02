@@ -90,7 +90,7 @@ void incubusApp::update(){
         cout << message << endl;
         vector<string> data = ofSplitString(message, ":");
         if (data[0] == "NEW")
-            serial.writeByte(0);
+            serial.writeByte(1);
         else if (data[0] == "HAI")
             addNewClient(atoi(data[1].c_str()));
         else if (data[0] == "BAI")
@@ -334,5 +334,5 @@ void incubusApp::removeClient(int pos){
     mask.update();
     mask.reloadTexture();
     if (connectedClients == 0)
-        serial.writeByte(4);
+        serial.writeByte(2);
 }

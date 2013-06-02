@@ -8,7 +8,7 @@ const int RED_B = 9;
 
 int p = 0;
 String programmes[] = {"OFF", "SOLID", "FADE", "STEREO", "FLASH", "NOISE"};
-int delayArray[] = {0,0,20,50,50,100};
+int delayArray[] = {0,0,16,48,24,100};
 unsigned int colours[6] = {0,0,0,0,0,0};
 unsigned int flashColours[6] = {255,0,255,255,0,255};
 int flashEasing;
@@ -180,7 +180,7 @@ void flash() {
   if (flashEasing > 5)
     flashEasing--;
   if (zeroCount == 6)
-    setRoutine(2);
+    setRoutine(5);
 }
 
 void noise() {
