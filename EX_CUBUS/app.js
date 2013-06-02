@@ -82,13 +82,15 @@ function setupExpressApp() {
 	app.set('title', 'IN//CUBUS');
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
-	//app.use(helmet.xframe('sameorigin'));
+	/*
+	app.use(helmet.xframe('sameorigin'));
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser());
 	app.use(express.cookieParser());
 	app.use(express.session({ secret: 'blargh' }));
 	app.use(fb.middleware({appID: credentials.fb.APP_ID, 
 		secret: credentials.fb.APP_SECRET, redirect_uri:"https://apps.facebook.com/in_cubus/"}));
+	*/
 	app.use(express.static(__dirname + '/public'));
 
 

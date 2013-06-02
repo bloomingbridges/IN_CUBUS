@@ -24,7 +24,6 @@ class incubusApp : public ofBaseApp{
     
     private:
         bool debug;
-        bool unmasked;
         bool recording;
         bool wired;
         int connectedClients;
@@ -43,9 +42,7 @@ class incubusApp : public ofBaseApp{
         ofxUDPManager udpConnection;
         ofSerial serial;
     
-        ofImage logo;
         ofImage qrCode;
-        ofTrueTypeFont onRamp;
         ofxTextBlock infoText;
         ofxTextBlock accessText;
 		

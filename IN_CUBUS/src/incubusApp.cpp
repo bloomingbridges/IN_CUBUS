@@ -16,7 +16,7 @@ void incubusApp::setup(){
     ofSetGlobalAmbientColor(ofFloatColor(127,127,127));
                                 
     ofSetVerticalSync(true);
-    debug = true;
+    debug = false;
     degrees = 0;
     cameraRotation = 0.0;
     connectedClients = 0;
@@ -35,9 +35,8 @@ void incubusApp::setup(){
         serialPort = deviceList[5].getDeviceName();
         wired = serial.setup(5,9600);
     }
-    
+
     qrCode.loadImage("qrcode.png");
-    logo.loadImage("logo.png");
     
     infoText.init("ONRAMP.ttf", 48);
     infoText.setText("To intercept cube transmissions scan the code");
@@ -126,10 +125,6 @@ void incubusApp::draw(){
     
 //    fbo.draw(0.f, 0.f);
     
-//    int p = (int) ofRandom(57600);
-//    mask.getPixelsRef()[p*4+3] = (unsigned char) 0;
-//    mask.update();
-    
     ofSetColor(41, 41, 41);
     ofRect(0, 0, 140, 1080);
     
@@ -150,17 +145,6 @@ void incubusApp::draw(){
         infoText.drawCenter(420, 40);
         accessText.drawCenter(420, 940);
         
-//        ofSetColor(239, 207, 162);
-//        onRamp.drawString("No QR-code scanner at hand?" , 32, 920);
-//        ofSetColor(64, 61, 54);
-//        onRamp.drawString("Search for IN//CUBUS on facebook or" , 32, 950);
-//        onRamp.drawString("navigate to apps.facebook.com/in_cubus manually." , 32, 980);
-//        
-//        ofSetColor(239, 207, 162);
-//        onRamp.drawString("Not a facebook user? Don't worry, " , 32, 1040);
-//        ofSetColor(64, 61, 54);
-//        onRamp.drawString("you can still participate by heading to" , 32, 1070);
-//        onRamp.drawString("incubus.bloomingbridges.co.uk" , 32, 1100);
         if (debug) ofPopMatrix();
     }
     
@@ -317,11 +301,7 @@ void incubusApp::addNewClient(int pos){
     mask.getPixelsRef()[pos*4] = (unsigned char) 239;
     mask.getPixelsRef()[pos*4+1] = (unsigned char) 207;
     mask.getPixelsRef()[pos*4+2] = (unsigned char) 162;
-//    mask.getPixelsRef()[pos*4] = (unsigned char) 163;
-//    mask.getPixelsRef()[pos*4+1] = (unsigned char) 217;
-//    mask.getPixelsRef()[pos*4+2] = (unsigned char) 216;
     mask.getPixelsRef()[pos*4+3] = (unsigned char) 255;
-    //mask.getPixelsRef()[pos*4+3] = (unsigned char) 0;
     mask.update();
     mask.reloadTexture();
 }
@@ -329,7 +309,6 @@ void incubusApp::addNewClient(int pos){
 //--------------------------------------------------------------
 void incubusApp::removeClient(int pos){
     connectedClients--;
-    //mask.getPixelsRef()[pos*4] = (unsigned char) 31;
     mask.getPixelsRef()[pos*4+3] = (unsigned char) 50;
     mask.update();
     mask.reloadTexture();

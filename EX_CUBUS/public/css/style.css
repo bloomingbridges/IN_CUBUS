@@ -61,6 +61,10 @@ h2, h3 {
 	text-transform: uppercase;
 }
 
+.js #help {
+	display: none;
+}
+
 #help p, #front p {
 	color: rgb(128,121,107);
 	text-align: justify;

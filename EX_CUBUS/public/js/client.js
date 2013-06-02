@@ -10,8 +10,7 @@ var pixel
 	, spazz = false
 	, synching = false;
 
-function initClient(authenticated) {
-    $('#help').hide();
+function initClient() {
     $('#info').append('<p><a href="#help" id="expandHelp">//ABØUT</a></p>');
     $('a#expandHelp').on('click', function(event) {
       $('#help').show();
