@@ -40,11 +40,11 @@ void incubusApp::setup(){
     logo.loadImage("logo.png");
     
     infoText.init("ONRAMP.ttf", 48);
-    infoText.setText("IN      CUBUS");
+    infoText.setText("To intercept cube transmissions scan the code");
     infoText.setColor(239, 207, 162, 255);
-    infoText.wrapTextForceLines(1);
+    infoText.wrapTextForceLines(6);
     
-    accessText.init("ONRAMP.ttf", 28);
+    accessText.init("ONRAMP.ttf", 14);
     accessText.setText("No QR-code scanner at hand? \n Search for IN//CUBUS on facebook or navigate to \n apps.facebook.com/in_cubus manually. \n \n Not a facebook user? Don't worry, you can still participate by heading to \n incubus.bloomingbridges.co.uk");
     accessText.wrapTextX(720);
     accessText.setColor(64, 61, 54, 255);
@@ -134,10 +134,10 @@ void incubusApp::draw(){
     ofRect(0, 0, 140, 1080);
     
     ofSetColor(64, 61, 54);
-    ofRect(40, 65, 60, 60);
+    ofRect(40, 85, 60, 60);
     
     ofSetColor(255, 255, 255);
-    qrCode.draw(45, 70, 50, 50);
+    qrCode.draw(45, 90, 50, 50);
     
     ofPopMatrix();
     
@@ -147,8 +147,8 @@ void incubusApp::draw(){
             ofScale(0.73, 0.73);
         }
         
-        infoText.drawCenter(420, 20);
-        accessText.drawCenter(420, 820);
+        infoText.drawCenter(420, 40);
+        accessText.drawCenter(420, 940);
         
 //        ofSetColor(239, 207, 162);
 //        onRamp.drawString("No QR-code scanner at hand?" , 32, 920);
@@ -314,9 +314,12 @@ void incubusApp::messWithMask(){
 void incubusApp::addNewClient(int pos){
     connectedClients++;
     serial.writeByte(4);
-    mask.getPixelsRef()[pos*4] = (unsigned char) 163;
-    mask.getPixelsRef()[pos*4+1] = (unsigned char) 217;
-    mask.getPixelsRef()[pos*4+2] = (unsigned char) 216;
+    mask.getPixelsRef()[pos*4] = (unsigned char) 239;
+    mask.getPixelsRef()[pos*4+1] = (unsigned char) 207;
+    mask.getPixelsRef()[pos*4+2] = (unsigned char) 162;
+//    mask.getPixelsRef()[pos*4] = (unsigned char) 163;
+//    mask.getPixelsRef()[pos*4+1] = (unsigned char) 217;
+//    mask.getPixelsRef()[pos*4+2] = (unsigned char) 216;
     mask.getPixelsRef()[pos*4+3] = (unsigned char) 255;
     //mask.getPixelsRef()[pos*4+3] = (unsigned char) 0;
     mask.update();

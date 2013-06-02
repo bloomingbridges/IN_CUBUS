@@ -102,7 +102,7 @@ function setupExpressApp() {
 		var options = {title: app.get('title'), port: app.get('port'), me: ""};
 		req.facebook.api('/me', function(err, user) {
 			if (clientHistory.indexOf(user.username) === -1) {
-				//clientHistory.push(user.username);
+				clientHistory.push(user.username);
 				//if (mediator) mediator.send(JSON.stringify({visiting:user.username}));
 				options.me = user.username;
 			}
