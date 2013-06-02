@@ -38,13 +38,13 @@ a:hover, a:active {
 	-webkit-transition: 0.3s background-color linear;
 }
 
-#help {
+#help , #front {
 	padding: 12px;
 	background-color: #403D36;
 	display: block;
 }
 
-#help h1 {
+h1 {
 	color: transparent;
 	text-indent: -9999px;
 	margin: 0.5em auto;
@@ -53,7 +53,7 @@ a:hover, a:active {
 	height: 27px;
 }
 
-#help h2, #help h3 {
+h2, h3 {
 	color: rgb(239, 207, 162);
 	text-align: center;
 	display: block;
@@ -61,20 +61,24 @@ a:hover, a:active {
 	text-transform: uppercase;
 }
 
-#help p {
+#help p, #front p {
 	color: rgb(128,121,107);
 	text-align: justify;
 	line-height: 1.5em;
 	margin: 2em 12px 1em 12px;
 }
 
-#help hr {
+#front {
+	margin-top: 48px;
+}
+
+hr {
 	border: none;
 	height: 57px;
 	background: transparent url(../apple-touch-icon-57x57-precomposed.png) no-repeat center center;
 }
 
-#help footer p {
+footer p {
 	font-size: small;
 }
 

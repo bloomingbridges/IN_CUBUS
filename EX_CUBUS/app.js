@@ -87,7 +87,7 @@ function setupExpressApp() {
 	app.use(express.bodyParser());
 	app.use(express.cookieParser());
 	app.use(express.session({ secret: 'blargh' }));
-	app.use(fb.middleware({appId: credentials.fb.APP_ID, 
+	app.use(fb.middleware({appID: credentials.fb.APP_ID, 
 		secret: credentials.fb.APP_SECRET, redirect_uri:"https://apps.facebook.com/in_cubus/"}));
 	app.use(express.static(__dirname + '/public'));
 
@@ -108,16 +108,30 @@ function setupExpressApp() {
 		});
 	});
 
-	app.post('/', fb.loginRequired(), function(req,res) {
-		var options = {title: app.get('title'), port: app.get('port'), me: ""};
-		req.facebook.api('/me', function(err, user) {
-			if (clientHistory.indexOf(user.username) === -1) {
-				//if (mediator) mediator.send(JSON.stringify({visiting:user.username}));
-				options.me = user.username;
-			}
-			res.render('index', options);
-		});
+	app.post('/app/', function(req,res) {
+		var options = {
+			title: app.get('title'), 
+			port: app.get('port'),
+			appID: credentials.fb.APP_ID,
+			appSECRET: credentials.fb.APP_SECRET
+		};
+		res.render('fbindex', options);
 	});
+
+	// app.get('/channel.html', function(req,res) {
+		
+	// });
+
+	// app.post('/', fb.loginRequired(), function(req,res) {
+	// 	var options = {title: app.get('title'), port: app.get('port'), me: ""};
+	// 	req.facebook.api('/me', function(err, user) {
+	// 		if (clientHistory.indexOf(user.username) === -1) {
+	// 			//if (mediator) mediator.send(JSON.stringify({visiting:user.username}));
+	// 			options.me = user.username;
+	// 		}
+	// 		res.render('index', options);
+	// 	});
+	// });
 
 	server.listen(app.get('port'), function(){
 	  console.log("Express server listening on port " + app.get('port'));

@@ -8,10 +8,8 @@ html(class='no-js')
     link(rel='stylesheet', href='/css/style.css')
     link(rel="apple-touch-icon-precomposed", href="apple-touch-icon-57x57-precomposed.png")
     link(rel="apple-touch-startup-image", href="apple-touch-startup-image-320x460.png")
-    script(type="text/javascript")
+    script
       var port = #{port}; var me = "#{me}";
-    script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
-    script(src="/js/modernizr.min.js")
   body
     #container
       #pixel(class="connecting")
@@ -23,4 +21,8 @@ html(class='no-js')
       #help
         include help
         include footer
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
+    script(src="/js/modernizr.min.js")
     script(src="/js/client.js")
+    script
+      $(document).ready(function() { initClient(false); });

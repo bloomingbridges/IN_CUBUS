@@ -1,0 +1,65 @@
+doctype5
+html(class='no-js')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, user-scalable=no, initial-scale = 1, maximum-scale = 1')
+    title #{title}
+    link(rel='stylesheet', href='/css/style.css')
+    script
+      var APP_ID = "#{appID}", port = #{port}, me = "";
+  body
+    #fb-root
+    #container
+
+      #pixel(class="connecting")
+
+      #info
+        p Unfortunately it looks like your device is unsuitable for our experiment. If you're on 
+          span Android
+          | , try using  
+          a(href="https://play.google.com/store/apps/details?id=com.android.chrome&hl=en", class="external") Chrome
+
+      #front
+        include front
+        include footer
+
+      #help
+        include help
+        include footer
+
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
+    script(src="/js/modernizr.min.js")
+    script(src="//connect.facebook.net/en_US/all.js")
+    script(src="/js/client.js")
+    script
+      $(document).ready(function(){
+
+        $('#help, #info').hide();
+        FB.init({ appId: APP_ID, channelUrl: 'http://incubus.bloomingbridges.co.uk/channel.html', status: true });
+
+        FB.Event.subscribe('auth.statusChange', function(response) {
+          if (response.status === 'connected') {
+            console.log("Logged in!");
+            $('#front').hide();
+            watchaKnowBoutMe(response);
+          }
+          else {
+            console.log("Please log in..");
+            FB.login(watchaKnowBoutMe);
+          }
+        });
+
+      });
+
+      function watchaKnowBoutMe(response) {
+        FB.api('/me', function(response) {
+            //console.log(response);
+            //$('#info').html('<p>Hello ' + response.username + '</p>');
+            if (response.username) {
+              me = response.username;
+              $('#info').show();
+              initClient(true);
+            }
+          });
+      }
+      

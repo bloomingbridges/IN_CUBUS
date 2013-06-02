@@ -10,26 +10,26 @@ var pixel
 	, spazz = false
 	, synching = false;
 
-$(document).ready(function() {
-	$('#help').hide();
-	$('#info').append('<p><a href="#help" id="expandHelp">//ABØUT</a></p>');
-	$('a#expandHelp').on('click', function(event) {
-		$('#help').show();
-		$(event.target).remove();
-	});
-	if (Modernizr.websockets) {
-		pixel = $('#pixel');
-		pixel.show();
-		fitPixel();
-		startPlayback();
-		$(window).resize(function(e) {
-			fitPixel();
-		});	
-		setupSocket();
-		if (me.length > 0 && Modernizr.canvas)
-			loadAvatar(me);
-	} 
-});
+function initClient(authenticated) {
+    $('#help').hide();
+    $('#info').append('<p><a href="#help" id="expandHelp">//ABØUT</a></p>');
+    $('a#expandHelp').on('click', function(event) {
+      $('#help').show();
+      $(event.target).remove();
+    });
+    if (Modernizr.websockets) {
+      pixel = $('#pixel');
+      pixel.show();
+      fitPixel();
+      startPlayback();
+      $(window).resize(function(e) {
+        fitPixel();
+      }); 
+      setupSocket();
+      if (me.length > 0 && Modernizr.canvas)
+        loadAvatar(me);
+    } 
+}
 
 function fitPixel() {
 	if (window.innerWidth < 768)
@@ -37,7 +37,6 @@ function fitPixel() {
 	else
 		pixel.css('height', pixel.css('width'));
 }
-
 
 function processAvatar() {
 	var ctx = cnvs.getContext('2d')
