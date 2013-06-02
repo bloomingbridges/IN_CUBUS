@@ -4,10 +4,10 @@
 var fs = require('fs') 
 	, express = require('express')
 	, http = require('http')
-	, helmet = require('helmet')
+	//, helmet = require('helmet')
 	, mongoose = require('mongoose')
 	, ws = require('websocket.io')
-	, fb = require('facebook-node-sdk');
+	//, fb = require('facebook-node-sdk');
 	//, BinaryServer = require('binaryjs').BinaryServer;
 
 
@@ -119,7 +119,7 @@ function setupExpressApp() {
 	});
 
 	// app.get('/channel.html', function(req,res) {
-		
+
 	// });
 
 	// app.post('/', fb.loginRequired(), function(req,res) {
