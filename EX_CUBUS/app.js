@@ -145,7 +145,7 @@ function onConnection(client) {
 	if (client.req.url === '/upstream') {
 
   	console.log("HELLO CHURN!");
-  	client.on('message', onIncomingStream);
+  	//client.on('message', onIncomingStream);
   	upstream = client;
 
   } else if (client.req.url === '/notifications') {
@@ -172,14 +172,10 @@ function onConnection(client) {
 	  		client.send(JSON.stringify({request:"PIXELS PLEASE!"}));
 	  	}
 	  	else if (msg.collection) {
-	  		console.log("Received potential pixels from #"+client.id);
-	  		console.log("Amount: " + msg.collection.length);
+	  		console.log("Received fresh pixels from #"+client.id);
+	  		savePixelsToDB(client.id, msg.owner, msg.collection);
 	  	}
 	  });
-	  // client.on('data', function(data) {
-	  // 	console.log("Received potential pixels from #"+client.id);
-	  // 	console.log(data.length);
-	  // });
 	  client.on('close', function() {
 	  	if (mediator) mediator.send(JSON.stringify({left:client.id}));
 	  	console.log('#' + client.id + " has left.");
@@ -231,6 +227,25 @@ function onIncomingStream(message) {
 			});
 		};
 	}
+}
+
+function savePixelsToDB(clientID, clientName, pixels) {
+	var pixel;
+	for (var i = 0; i < pixels.length; i++) {
+		pixel = new Pixel(pixels[i]);
+		pixel.owner = clientName;
+		pixel.step = clientID;
+		pixel.save(onPixelSaved);
+	}
+	// TODO Send updated pixels to all connected clients
+	// TODO Send out synch date
+}
+
+function onPixelSaved(err, pixel) {
+	if (err)
+		console.log(err);
+	//else
+		//console.log("PIXEL SAVED TO DB");
 }
 
 function onMediatorMessage(message) {

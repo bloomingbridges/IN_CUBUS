@@ -38,25 +38,6 @@ function fitPixel() {
 		pixel.css('height', pixel.css('width'));
 }
 
-function loadAvatar(user) {
-	avatar = new Image();
-	avatar.crossOrigin = '';
-	avatar.src = "http://graph.facebook.com/"+user+"/picture?type=square";
-	avatar.onload = function() {
-		//console.log("Avatar has been loaded successfully.");
-		cnvs = document.createElement('canvas');
-		cnvs.width = 50;
-		cnvs.height = 50;
-		cnvs.id = "workbench";
-		$("#container").append(cnvs);
-		var ctx = cnvs.getContext('2d');
-		ctx.drawImage(avatar, 0, 0);
-		var p = ctx.getImageData(0,0,50,50);
-		//console.log("Pixel #1: R: " + p.data[0] + ", G: " + p.data[1] + ", B: " + p.data[2]);
-		var msg = JSON.stringify({avatar:"ready"});
-		socket.send(msg);
-	};
-}
 
 function processAvatar() {
 	var ctx = cnvs.getContext('2d')
@@ -129,6 +110,27 @@ function setupSocket() {
 		console.log(error);
 	}
 
+}
+
+function loadAvatar(user) {
+	avatar = new Image();
+	avatar.crossOrigin = '';
+	avatar.src = "http://graph.facebook.com/"+user+"/picture?type=square";
+	avatar.onload = function() {
+		//console.log("Avatar has been loaded successfully.");
+		cnvs = document.createElement('canvas');
+		cnvs.width = 50;
+		cnvs.height = 50;
+		cnvs.id = "workbench";
+		$("#container").append(cnvs);
+		$("#workbench").attr("width", 50).attr("height", 50);
+		var ctx = cnvs.getContext('2d');
+		ctx.drawImage(avatar, 0, 0);
+		var p = ctx.getImageData(0,0,50,50);
+		//console.log("Pixel #1: R: " + p.data[0] + ", G: " + p.data[1] + ", B: " + p.data[2]);
+		var msg = JSON.stringify({avatar:"ready"});
+		socket.send(msg);
+	};
 }
 
 function setPixelToSpazz() {
