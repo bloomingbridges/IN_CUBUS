@@ -107,7 +107,9 @@ a:hover, a:active {
 }
 
 #workbench {
-	visibility: hidden;
+	position: absolute;
+	top: -50px;
+	left: -9050px;
 	border: 1px solid white;
 	width: 50px;
 	height: 50px;
