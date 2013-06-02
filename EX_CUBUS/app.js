@@ -4,6 +4,7 @@
 var fs = require('fs') 
 	, express = require('express')
 	, http = require('http')
+	, helmet = require('helmet')
 	, mongoose = require('mongoose')
 	, ws = require('websocket.io')
 	, fb = require('facebook-node-sdk');
@@ -81,13 +82,15 @@ function setupExpressApp() {
 	app.set('title', 'IN//CUBUS');
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
+	//app.use(helmet.xframe('sameorigin'));
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser());
 	app.use(express.cookieParser());
 	app.use(express.session({ secret: 'blargh' }));
 	app.use(fb.middleware({appId: credentials.fb.APP_ID, 
-		secret: credentials.fb.APP_SECRET}));
+		secret: credentials.fb.APP_SECRET, redirect_uri:"https://apps.facebook.com/in_cubus/"}));
 	app.use(express.static(__dirname + '/public'));
+
 
 	// Routes ////////////////////////////////////////////////////////////////////
 
@@ -109,7 +112,6 @@ function setupExpressApp() {
 		var options = {title: app.get('title'), port: app.get('port'), me: ""};
 		req.facebook.api('/me', function(err, user) {
 			if (clientHistory.indexOf(user.username) === -1) {
-				//clientHistory.push(user.username);
 				//if (mediator) mediator.send(JSON.stringify({visiting:user.username}));
 				options.me = user.username;
 			}
@@ -237,6 +239,7 @@ function savePixelsToDB(clientID, clientName, pixels) {
 		pixel.step = clientID;
 		pixel.save(onPixelSaved);
 	}
+	clientHistory.push(clientName);
 	// TODO Send updated pixels to all connected clients
 	// TODO Send out synch date
 }
