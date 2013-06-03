@@ -6,6 +6,8 @@ var fs = require('fs')
 	, http = require('http')
 	, mongoose = require('mongoose')
 	, ws = require('websocket.io')
+	, $ = require('jquery-deferred')
+	, Q = require('q');
 
 
 // Models //////////////////////////////////////////////////////////////////////
@@ -173,13 +175,15 @@ function onConnection(client) {
 
   	console.log("NEW CONNECTION!");
   	var newPosition = allocateNewRandomPosition(false);
-	  var pixelArray = grabPixelArrayForPosition(newPosition);
+	  //var pixelArray = grabPixelArrayForPosition(newPosition);
+	  var pixelArray = generateNoiseArray();
 	  var data = {position: indexToCoordinates(newPosition), pixels: pixelArray};
 	  client.send(JSON.stringify(data));
 	  if (mediator) mediator.send(JSON.stringify({created:newPosition}));
 	  var newUser = new User({name: "", position:newPosition});
 	  newUser.save(onSavedToMongoDB);
 	  client.id = newPosition;
+	  grabPixelArrayForClient(client);
 	  client.on('message', function(msg) {
 	  	msg = JSON.parse(msg);
 	  	if (msg.avatar) {
@@ -362,28 +366,61 @@ function indexToCoordinates(index) {
 	return {x:x, y:y};
 }
 
-function grabPixelArrayForPosition(position) {
-	var array = [];
+function retrievePixel(owner, position, index) {
+	var deferred = Q.defer(),
+			pixelObj;
+	Pixel.findOne({owner: owner, position: position}, 
+		function(error, pixel) 
+		{
+			if (error) {
+				console.log(error);
+				deferred.reject(new Error("Couldn't fetch pixel.. :<"));
+			}
+			else {
+				//console.log("I FOUND THIS ONE");
+				//console.log(pixel);\
+				pixelObj = pixel.toObject();
+				pixelObj.index = index;
+				console.log(pixel, pixelObj);
+				deferred.resolve(pixelObj);
+			}
+		}
+	);
+	return deferred.promise;
+}
+
+function grabPixelArrayForClient(client) {
+	var promises = [];
+
 	for (var i = 0; i < (WIDTH*HEIGHT); i++) {
 		if (clientHistory[i]) {
-			Pixel.findOne({owner: clientHistory[i], position: position}, 
-				function(error, pixel) 
-				{
-					if (error) {
-						console.log(error);
-					}
-					else {
-						console.log("I FOUND THIS ONE");
-						console.log(pixel);
-						array.push({r:pixel.r, g:pixel.g, b:pixel.b});
-					}
-				}
-			);
-			console.log(penis);
+			promises.push(retrievePixel(clientHistory[i], client.id, i));
 		}
-		else
-			array.push({r:128, g:121, b:107});
-    	//array.push(generateRandomPixel());
+	}
+	
+	Q.allResolved(promises).then(function(promises) { 
+
+		promises.forEach(function (promise) {
+        if (promise.isFulfilled()) {
+            var pixel = promise.valueOf();
+            console.log("Here's a pixel");
+            console.log(pixel);
+        } else {
+            var exception = promise.valueOf().exception;
+        }
+    })
+	})
+}
+
+function sendCurrentPixels(client, pixels) {
+
+}
+
+function generateNoiseArray() {
+	var array = [];
+	for (var i = 0; i < (WIDTH*HEIGHT); i++) {
+			//array.push({r:128, g:121, b:107});
+    	array.push(generateRandomPixel());
 	}
 	return array;
 }

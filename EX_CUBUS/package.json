@@ -7,7 +7,9 @@
     "express": "3.0.x",
     "jade": "*",
     "mongoose": "*",
-    "websocket.io": "*"
+    "websocket.io": "*",
+    "jquery-deferred": "*",
+    "q":"*"
   },
   "engines": {
     "node":"0.8.15"
