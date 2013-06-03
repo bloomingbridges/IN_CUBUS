@@ -386,7 +386,7 @@ function retrievePixel(owner, position, index) {
 					owner: pixel.owner,
 					position: pixel.position
 				}
-				console.log(pixel.position, pixelObj);
+				//console.log(pixel.position, pixelObj);
 				deferred.resolve(pixelObj);
 			}
 		}

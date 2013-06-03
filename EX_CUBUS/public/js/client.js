@@ -83,6 +83,7 @@ function setupSocket() {
 			processAvatar();
 		} else if (data.index) {
 			console.log("UPDATED #"+data.index+"!");
+			console.log(data);
 			pixelValues[data.index] = {r:data.r, b:data.b, g:data.g};
 		} else if (data.syncAt) {
 			if (synching)
