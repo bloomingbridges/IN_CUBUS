@@ -49,7 +49,7 @@ function updatePixel() {
 	var p = pixelValues[index];
 	var colour = (typeof p === 'object') ? 'rgb(' + p.r + ',' + p.g + ',' + p.b + ')' : p;
 	$(pixel).css('background-color', colour);
-	$(pixel).html(index);
+	$("#debug").html(index);
 }
 
 function setupSocket() {
@@ -83,12 +83,14 @@ function setupSocket() {
 			processAvatar();
 		} else if (data.index) {
 			console.log("UPDATED #"+data.index+"!");
-			pixelArray[data.index] = {r:data.r, b:data.b, g:data.g};
-		} else if (data.sync) {
+			pixelValues[data.index] = {r:data.r, b:data.b, g:data.g};
+		} else if (data.syncAt) {
+			if (synching)
+				clearInterval(syncTimer);
 			synching = true;
-			syncAt = data.sync;
+			syncAt = data.syncAt;
 			console.log("Getting ready to synchronize..");
-			syncTimer = setInterval(sync, 10);
+			syncTimer = setInterval(syncMeUp, 10);
 		}
 	};
 
@@ -142,7 +144,7 @@ function processAvatar() {
 	socket.send(myPixels);
 }
 
-function sync() {
+function syncMeUp() {
 	if (new Date().getUTCSeconds() >= syncAt) {
 		index = 0;
 		clearInterval(syncTimer);

@@ -29,6 +29,10 @@ a:hover, a:active {
 	transform: translate(0,0);
 }
 
+#pixel #debug {
+	display: none;
+}
+
 #pixel.playback {
 	-webkit-transition: 0s background-color linear;
 }

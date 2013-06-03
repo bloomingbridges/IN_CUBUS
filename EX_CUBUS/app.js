@@ -377,9 +377,16 @@ function retrievePixel(owner, position, index) {
 			else {
 				//console.log("I FOUND THIS ONE");
 				//console.log(pixel);\
-				pixelObj = pixel.toObject();
-				pixelObj.index = index;
-				//console.log(pixel, pixelObj);
+				//pixelObj = pixel.toObject();
+				var pixelObj = {
+					index: index,
+					r: pixel.r,
+					g: pixel.g,
+					b: pixel.b,
+					owner: pixel.owner,
+					position: pixel.position
+				}
+				console.log(pixel.position, pixelObj);
 				deferred.resolve(pixelObj);
 			}
 		}
@@ -416,13 +423,13 @@ function updateAllClients() {
 	for (var i = clients.length - 1; i >= 0; i--) {
 		grabPixelArrayForClient(clients[i]);
 	};
-	synchUpAllClients(10);	
+	syncUpAllClients(10);	
 }
 
 function syncUpAllClients(seconds) {
 	var time = new Date().getUTCSeconds() + seconds;
-	for (var i = clients.length - 1; i >= 0; i--) {
-		clients[i].send(JSON.stringify({sync:time}));
+	for (var i = socket.clients.length - 1; i >= 0; i--) {
+		socket.clients[i].send(JSON.stringify({syncAt:time}));
 	}
 }
 
