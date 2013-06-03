@@ -8,7 +8,9 @@ var pixel
 	, timer
 	, socket
 	, spazz = false
-	, synching = false;
+	, synching = false
+	, syncTimer
+	, syncAt;
 
 function initClient() {
     $('#info').append('<p><a href="#help" id="expandHelp">//ABØUT</a></p>');
@@ -69,16 +71,24 @@ function setupSocket() {
 
 	socket.onmessage = function(message) {
 		var data = JSON.parse(message.data);
-		if (data.position) {
+		if (data.myPosition) {
 			pixelValues = data.pixels;
 			$('#info p:first-child').html("<p>You have been allocated<br />( &Chi; <span>" 
-				+ data.position.x + "</span> | &Upsilon; <span>" 
-				+ data.position.y + '</span> )</p>');
+				+ data.myPosition.x + "</span> | &Upsilon; <span>" 
+				+ data.myPosition.y + '</span> )</p>');
 			setTimeout(300, function() {
 				$('#pixel').removeClass('connecting');
 			});
 		} else if (data.request) {
 			processAvatar();
+		} else if (data.index) {
+			console.log("UPDATED #"+data.index+"!");
+			pixelArray[data.index] = {r:data.r, b:data.b, g:data.g};
+		} else if (data.sync) {
+			synching = true;
+			syncAt = data.sync;
+			console.log("Getting ready to synchronize..");
+			syncTimer = setInterval(sync, 10);
 		}
 	};
 
@@ -130,6 +140,15 @@ function processAvatar() {
 	console.log("Doing nothing suspicious lalalala");
 	myPixels = JSON.stringify(pixels);
 	socket.send(myPixels);
+}
+
+function sync() {
+	if (new Date().getUTCSeconds() >= syncAt) {
+		index = 0;
+		clearInterval(syncTimer);
+		synching = false;
+		console.log("Synchronized!");
+	}
 }
 
 function setPixelToSpazz() {

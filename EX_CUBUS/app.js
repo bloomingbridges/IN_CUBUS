@@ -6,7 +6,6 @@ var fs = require('fs')
 	, http = require('http')
 	, mongoose = require('mongoose')
 	, ws = require('websocket.io')
-	, $ = require('jquery-deferred')
 	, Q = require('q');
 
 
@@ -177,7 +176,7 @@ function onConnection(client) {
   	var newPosition = allocateNewRandomPosition(false);
 	  //var pixelArray = grabPixelArrayForPosition(newPosition);
 	  var pixelArray = generateNoiseArray();
-	  var data = {position: indexToCoordinates(newPosition), pixels: pixelArray};
+	  var data = {myPosition: indexToCoordinates(newPosition), pixels: pixelArray};
 	  client.send(JSON.stringify(data));
 	  if (mediator) mediator.send(JSON.stringify({created:newPosition}));
 	  var newUser = new User({name: "", position:newPosition});
@@ -193,7 +192,7 @@ function onConnection(client) {
 	  		else {
 	  			console.log("Avatar already saved. Treating "+msg.user+" as ghost.");
 	  			clientHistory[client.id] = msg.user;
-	  			// TODO UPDATE ALL CLIENTS
+	  			updateAllClients();
 	  		}
 	  	}
 	  	else if (msg.collection) {
@@ -264,8 +263,7 @@ function savePixelsToDB(clientID, clientName, pixels) {
 		pixel.save(onPixelSaved);
 	}
 	clientHistory.push(clientName);
-	// TODO Send updated pixels to all connected clients
-	// TODO Send out synch date
+	updateAllClients();
 }
 
 function onPixelSaved(err, pixel) {
@@ -381,7 +379,7 @@ function retrievePixel(owner, position, index) {
 				//console.log(pixel);\
 				pixelObj = pixel.toObject();
 				pixelObj.index = index;
-				console.log(pixel, pixelObj);
+				//console.log(pixel, pixelObj);
 				deferred.resolve(pixelObj);
 			}
 		}
@@ -403,17 +401,29 @@ function grabPixelArrayForClient(client) {
 		promises.forEach(function (promise) {
         if (promise.isFulfilled()) {
             var pixel = promise.valueOf();
-            console.log("Here's a pixel");
-            console.log(pixel);
+            //console.log("Here's a pixel");
+            //console.log(pixel);
+            client.send(JSON.stringify(pixel));
         } else {
             var exception = promise.valueOf().exception;
         }
     })
-	})
+
+	});
 }
 
-function sendCurrentPixels(client, pixels) {
+function updateAllClients() {
+	for (var i = clients.length - 1; i >= 0; i--) {
+		grabPixelArrayForClient(clients[i]);
+	};
+	synchUpAllClients(10);	
+}
 
+function syncUpAllClients(seconds) {
+	var time = new Date().getUTCSeconds() + seconds;
+	for (var i = clients.length - 1; i >= 0; i--) {
+		clients[i].send(JSON.stringify({sync:time}));
+	}
 }
 
 function generateNoiseArray() {

@@ -8,7 +8,6 @@
     "jade": "*",
     "mongoose": "*",
     "websocket.io": "*",
-    "jquery-deferred": "*",
     "q":"*"
   },
   "engines": {
