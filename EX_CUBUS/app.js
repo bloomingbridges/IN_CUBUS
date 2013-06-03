@@ -4,11 +4,8 @@
 var fs = require('fs') 
 	, express = require('express')
 	, http = require('http')
-	//, helmet = require('helmet')
 	, mongoose = require('mongoose')
 	, ws = require('websocket.io')
-	//, fb = require('facebook-node-sdk');
-	//, BinaryServer = require('binaryjs').BinaryServer;
 
 
 // Models //////////////////////////////////////////////////////////////////////
@@ -27,7 +24,7 @@ var app = express()
 	, server = http.createServer(app)
 	, credentials = {}
   , clients = []
-  , clientHistory = []
+  , clientHistory = makeHistory()
 	, socket
 	, mediator
 	, flushTimer = null
@@ -180,17 +177,25 @@ function onConnection(client) {
 	  var data = {position: indexToCoordinates(newPosition), pixels: pixelArray};
 	  client.send(JSON.stringify(data));
 	  if (mediator) mediator.send(JSON.stringify({created:newPosition}));
-	  var newUser = new User({position:newPosition, authenticated:false});
+	  var newUser = new User({name: "", position:newPosition});
 	  newUser.save(onSavedToMongoDB);
 	  client.id = newPosition;
 	  client.on('message', function(msg) {
 	  	msg = JSON.parse(msg);
 	  	if (msg.avatar) {
-	  		console.log('#'+client.id+" says: "+msg.avatar);
-	  		client.send(JSON.stringify({request:"PIXELS PLEASE!"}));
+	  		//console.log('#'+client.id+" says: "+msg.avatar);
+	  		if (clientHistory.indexOf(msg.user) === -1)
+	  			client.send(JSON.stringify({request:"PIXELS PLEASE!"}));
+	  		else {
+	  			console.log("Avatar already saved. Treating "+msg.user+" as ghost.");
+	  			clientHistory[client.id] = msg.user;
+	  			// TODO UPDATE ALL CLIENTS
+	  		}
 	  	}
 	  	else if (msg.collection) {
-	  		console.log("Received fresh pixels from #"+client.id);
+	  		console.log("Received fresh pixels from #"+client.id+" "+msg.owner);
+	  		client.name = msg.owner;
+	  		clientHistory[client.id] = client.name;
 	  		savePixelsToDB(client.id, msg.owner, msg.collection);
 	  	}
 	  });
@@ -200,10 +205,9 @@ function onConnection(client) {
 	  	User.remove({position:client.id}, function(error) {
 	  		if (error)
 	  			console.log(error);
-	  		else
-	  			console.log("DB entry has been removed successfully!");
+	  		// else
+	  		// 	console.log("DB entry has been removed successfully!");
 	  	});
-	  	// TODO notify cube etc.
 	  });
 
 	}
@@ -212,7 +216,7 @@ function onConnection(client) {
 
 function onSavedToMongoDB(error) {
 	if (!error) {
-		console.log("DATA SUCCESSFULLY STORED IN DATABASE");
+		//console.log("DATA SUCCESSFULLY STORED IN DATABASE");
 		User.find(updateInventory);
 	}
 	else
@@ -225,34 +229,34 @@ function updateInventory(error, items) {
 	else console.log(error);
 }
 
-function onIncomingStream(message) {
-	//console.log(message);
-	var pixels = JSON.parse(message);
-	if (pixels) {
-		/*console.log("RECEIVED [" 
-			+ pixels[0].step 
-			+ ".png] " 
-			+ ( pixels.length * 4 ) 
-			+ " Bytes");*/
-		var pixel;
-		for (var i = 0; i < pixels.length; i++) {
-			pixel = new Pixel(pixels[i]);
-			pixel.save(function(err, pixel) {
-				if (err)
-					console.log(err);
-				//else
-					//console.log("PIXEL SAVED TO DB");
-			});
-		};
-	}
-}
+// function onIncomingStream(message) {
+// 	//console.log(message);
+// 	var pixels = JSON.parse(message);
+// 	if (pixels) {
+// 		/*console.log("RECEIVED [" 
+// 			+ pixels[0].step 
+// 			+ ".png] " 
+// 			+ ( pixels.length * 4 ) 
+// 			+ " Bytes");*/
+// 		var pixel;
+// 		for (var i = 0; i < pixels.length; i++) {
+// 			pixel = new Pixel(pixels[i]);
+// 			pixel.save(function(err, pixel) {
+// 				if (err)
+// 					console.log(err);
+// 				//else
+// 					//console.log("PIXEL SAVED TO DB");
+// 			});
+// 		};
+// 	}
+// }
 
 function savePixelsToDB(clientID, clientName, pixels) {
 	var pixel;
 	for (var i = 0; i < pixels.length; i++) {
 		pixel = new Pixel(pixels[i]);
 		pixel.owner = clientName;
-		pixel.step = clientID;
+		// pixel.step = clientID;
 		pixel.save(onPixelSaved);
 	}
 	clientHistory.push(clientName);
@@ -263,8 +267,6 @@ function savePixelsToDB(clientID, clientName, pixels) {
 function onPixelSaved(err, pixel) {
 	if (err)
 		console.log(err);
-	//else
-		//console.log("PIXEL SAVED TO DB");
 }
 
 function onMediatorMessage(message) {
@@ -363,12 +365,41 @@ function indexToCoordinates(index) {
 function grabPixelArrayForPosition(position) {
 	var array = [];
 	for (var i = 0; i < (WIDTH*HEIGHT); i++) {
-		var randR = 47 + Math.floor(Math.random() * 60);
-    var randG = 84 + Math.floor(Math.random() * 40);
-    var randB = 107 + Math.floor(Math.random() * 10);
-    array.push({r:randR, g:randG, b:randB});
-		//array.push({r:128, g:121, b:107});
+		if (clientHistory[i]) {
+			Pixel.findOne({owner: clientHistory[i], position: position}, 
+				function(error, pixel) 
+				{
+					if (error) {
+						console.log(error);
+					}
+					else {
+						console.log("I FOUND THIS ONE");
+						console.log(pixel);
+						array.push({r:pixel.r, g:pixel.g, b:pixel.b});
+					}
+				}
+			);
+			console.log(penis);
+		}
+		else
+			array.push({r:128, g:121, b:107});
+    	//array.push(generateRandomPixel());
 	}
 	return array;
 }
 
+function generateRandomPixel() {
+	var randR = 47 + Math.floor(Math.random() * 60);
+  var randG = 84 + Math.floor(Math.random() * 40);
+  var randB = 107 + Math.floor(Math.random() * 10);
+  return {r:randR, g:randG, b:randB};
+}
+
+function makeHistory() {
+	var history = [];
+	for (var i=0; i<WIDTH*HEIGHT; i++) {
+		history[i] = null;
+	}
+	console.log("Client History initialised.");
+	return history;
+}

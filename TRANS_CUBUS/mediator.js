@@ -22,6 +22,9 @@ udp.on("message", function (msg, rinfo) {
   	console.log("Received order to flush the database.");
   	socket.send(JSON.stringify({cmd:"FLUSH"}));
   }
+  else if (msg == "HISTORY") {
+  	//TODO REQUEST CLIENT HISTORY FROM SERVER
+  }
 });
 
 udp.on("listening", function () {

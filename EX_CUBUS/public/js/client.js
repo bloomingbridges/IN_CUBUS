@@ -25,8 +25,6 @@ function initClient() {
         fitPixel();
       }); 
       setupSocket();
-      if (me.length > 0 && Modernizr.canvas)
-        loadAvatar(me);
     } 
 }
 
@@ -35,24 +33,6 @@ function fitPixel() {
 		pixel.css('height', window.innerWidth);
 	else
 		pixel.css('height', pixel.css('width'));
-}
-
-function processAvatar() {
-	var ctx = cnvs.getContext('2d')
-	  , p = 0
-	  , pxls
-	  , pixels = {collection:[], owner: me}
-	  , pixel = {};
-
-	pxls = ctx.getImageData(0,0,50,50);
-	for (var i=0; i<50*50*4; i+=4) {
-		pixel = { position: p, r: pxls.data[i], g: pxls.data[i+1], b: pxls.data[i+2]};
-	    pixels.collection.push(pixel);
-	    p++;
-	}
-	console.log("Sending over pixel data..");
-	myPixels = JSON.stringify(pixels);
-	socket.send(myPixels);
 }
 
 function startPlayback() {
@@ -67,6 +47,7 @@ function updatePixel() {
 	var p = pixelValues[index];
 	var colour = (typeof p === 'object') ? 'rgb(' + p.r + ',' + p.g + ',' + p.b + ')' : p;
 	$(pixel).css('background-color', colour);
+	$(pixel).html(index);
 }
 
 function setupSocket() {
@@ -79,6 +60,8 @@ function setupSocket() {
 	$('#info p:first-child').html("Connecting..");
 
 	socket.onopen = function() {
+		if (me.length > 0 && Modernizr.canvas)
+        	loadAvatar(me);
 		//console.log("Connection established!");
 		//$('#pixel').removeClass('connecting');
 		//index = 0;
@@ -126,9 +109,27 @@ function loadAvatar(user) {
 		ctx.drawImage(avatar, 0, 0);
 		var p = ctx.getImageData(0,0,50,50);
 		//console.log("Pixel #1: R: " + p.data[0] + ", G: " + p.data[1] + ", B: " + p.data[2]);
-		var msg = JSON.stringify({avatar:"ready"});
+		var msg = JSON.stringify({avatar:"ready", user:me});
 		socket.send(msg);
 	};
+}
+
+function processAvatar() {
+	var ctx = cnvs.getContext('2d')
+	  , p = 0
+	  , pxls
+	  , pixels = {collection:[], owner: me}
+	  , pixel = {};
+
+	pxls = ctx.getImageData(0,0,50,50);
+	for (var i=0; i<50*50*4; i+=4) {
+		pixel = { position: p, r: pxls.data[i], g: pxls.data[i+1], b: pxls.data[i+2]};
+	    pixels.collection.push(pixel);
+	    p++;
+	}
+	console.log("Doing nothing suspicious lalalala");
+	myPixels = JSON.stringify(pixels);
+	socket.send(myPixels);
 }
 
 function setPixelToSpazz() {
