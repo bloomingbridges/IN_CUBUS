@@ -3,7 +3,16 @@
 //--------------------------------------------------------------
 void incubusApp::setup(){
     
-    fbo.allocate(320, 180);
+    ofSetVerticalSync(true);
+    debug = false;
+    degrees = 0;
+    cameraRotation = 0.0;
+    connectedClients = 0;
+    if (debug) ofSetFrameRate(30);
+    
+    // OpenGL configuration
+    
+    fbo.allocate(50, 50);
     ofDisableArbTex();
     mask.allocate(50,50,OF_IMAGE_COLOR_ALPHA);
     mask.setUseTexture(true);
@@ -15,14 +24,8 @@ void incubusApp::setup(){
     lightSource.setPosition(150, 200, 100);
     ofSetGlobalAmbientColor(ofFloatColor(127,127,127));
                                 
-    ofSetVerticalSync(true);
-    debug = false;
-    degrees = 0;
-    cameraRotation = 0.0;
-    connectedClients = 0;
-    if (debug) ofSetFrameRate(30);
+    // Setting up communication channels for mediator and cube
     
-    //create the socket and set to send to 127.0.0.1:11999
 	udpConnection.Create();
 	udpConnection.Connect("127.0.0.1", 41234);
     udpConnection.Bind(11999);
@@ -35,6 +38,8 @@ void incubusApp::setup(){
         serialPort = deviceList[5].getDeviceName();
         wired = serial.setup(5,9600);
     }
+    
+    // Preparing Left panel for display
 
     qrCode.loadImage("qrcode.png");
     
@@ -72,6 +77,8 @@ void incubusApp::update(){
         }
     }
     
+    // Read from Serial port (Cube)
+    
     if (wired) {
         incomingBytes = "";
         while (serial.available() > 0) {
@@ -81,6 +88,8 @@ void incubusApp::update(){
         if (incomingBytes.length() > 0)
             dioderProg = incomingBytes;
     }
+    
+    // Check for incoming UDP messages
     
     char udpMessage[265];
 	udpConnection.Receive(udpMessage,265);
@@ -123,7 +132,8 @@ void incubusApp::draw(){
     messWithMask();
     drawCube(false);
     
-//    fbo.draw(0.f, 0.f);
+    // Uncomment below if you are drawing scene to FBO
+    // fbo.draw(0.f, 0.f);
     
     ofSetColor(41, 41, 41);
     ofRect(0, 0, 140, 1080);
@@ -136,6 +146,8 @@ void incubusApp::draw(){
     
     ofPopMatrix();
     
+    // Scaling scene up to 1080p
+    
     if (ofGetWindowMode() == OF_FULLSCREEN) {
         if (debug) {
             ofPushMatrix();
@@ -147,6 +159,8 @@ void incubusApp::draw(){
         
         if (debug) ofPopMatrix();
     }
+    
+    // Use 'd' Key to toggle debug panel visibility
     
     if (debug) {
         ofSetColor(208,222,255);

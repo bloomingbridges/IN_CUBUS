@@ -417,7 +417,6 @@ function syncUpAllClients(seconds) {
 function generateNoiseArray() {
 	var array = [];
 	for (var i = 0; i < (WIDTH*HEIGHT); i++) {
-			//array.push({r:128, g:121, b:107});
     	array.push(generateRandomPixel());
 	}
 	return array;
