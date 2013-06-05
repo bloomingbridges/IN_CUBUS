@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 
 var userSchema = mongoose.Schema({
 	name: String,
-	position: {type: Number, unique: true}
+	position: Number
 });
 
 var pixelSchema = mongoose.Schema({

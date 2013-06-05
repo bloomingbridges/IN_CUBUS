@@ -1,6 +1,6 @@
 {
   "name": "in_cubus",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "author": "bloomingbridges <brueckner.florian@googlemail.com>",
   "private": "true",
   "dependencies": {

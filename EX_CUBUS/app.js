@@ -30,7 +30,6 @@ var app = express()
 	, mediator
 	, flushTimer = null
 	, upstream
-	, bServer
 	, db;
 
 
@@ -49,7 +48,6 @@ function init() {
 	establishDatabaseConnection();
 	setupExpressApp();
 	setupSockets();
-	//setupBinaryServer();
 }
 
 function establishDatabaseConnection() {
@@ -57,6 +55,7 @@ function establishDatabaseConnection() {
 	var auth = credentials.db.USER + ':' + credentials.db.PWD + '@';
 	var address = credentials.db.URL + credentials.db.NAME
 	db = mongoose.createConnection('mongodb://' + auth + address);
+
 
 	// Mongoose Handlers /////////////////////////////////////////////////////////
 
@@ -80,15 +79,6 @@ function setupExpressApp() {
 	app.set('title', 'IN//CUBUS');
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
-	/*
-	app.use(helmet.xframe('sameorigin'));
-	app.use(express.logger('dev'));
-	app.use(express.bodyParser());
-	app.use(express.cookieParser());
-	app.use(express.session({ secret: 'blargh' }));
-	app.use(fb.middleware({appID: credentials.fb.APP_ID, 
-		secret: credentials.fb.APP_SECRET, redirect_uri:"https://apps.facebook.com/in_cubus/"}));
-	*/
 	app.use(express.static(__dirname + '/public'));
 
 
@@ -118,21 +108,6 @@ function setupExpressApp() {
 		res.render('fbindex', options);
 	});
 
-	// app.get('/channel.html', function(req,res) {
-
-	// });
-
-	// app.post('/', fb.loginRequired(), function(req,res) {
-	// 	var options = {title: app.get('title'), port: app.get('port'), me: ""};
-	// 	req.facebook.api('/me', function(err, user) {
-	// 		if (clientHistory.indexOf(user.username) === -1) {
-	// 			//if (mediator) mediator.send(JSON.stringify({visiting:user.username}));
-	// 			options.me = user.username;
-	// 		}
-	// 		res.render('index', options);
-	// 	});
-	// });
-
 	server.listen(app.get('port'), function(){
 	  console.log("Express server listening on port " + app.get('port'));
 	});
@@ -144,24 +119,14 @@ function setupSockets() {
 	socket.on('connection', onConnection);
 }
 
-// function setupBinaryServer() {
-// 	bServer = new BinaryServer({server:server})
-// 	bServer.on('connection', function(client) {
-// 		client.on('error', function(error) {
-// 			console.log(error.stack, error.message);
-// 		});
-// 	});
-// }
 
-
-// Sockets /////////////////////////////////////////////////////////////////////
+// Communication ///////////////////////////////////////////////////////////////
 
 function onConnection(client) {
 
 	if (client.req.url === '/upstream') {
 
   	console.log("HELLO CHURN!");
-  	//client.on('message', onIncomingStream);
   	upstream = client;
 
   } else if (client.req.url === '/notifications') {
@@ -176,17 +141,27 @@ function onConnection(client) {
   	var newPosition = allocateNewRandomPosition(false);
 	  //var pixelArray = grabPixelArrayForPosition(newPosition);
 	  var pixelArray = generateNoiseArray();
-	  var data = {myPosition: indexToCoordinates(newPosition), pixels: pixelArray};
+	  var data = {
+	  	myPosition: indexToCoordinates(newPosition), 
+	  	pixels: pixelArray
+	  };
 	  client.send(JSON.stringify(data));
+
 	  if (mediator) mediator.send(JSON.stringify({created:newPosition}));
 	  var newUser = new User({name: "", position:newPosition});
 	  newUser.save(onSavedToMongoDB);
 	  client.id = newPosition;
 	  grabPixelArrayForClient(client);
+
+
+	  // Bind socket handlers for new client /////////////////////////////////////
+
 	  client.on('message', function(msg) {
+
 	  	msg = JSON.parse(msg);
+
 	  	if (msg.avatar) {
-	  		//console.log('#'+client.id+" says: "+msg.avatar);
+
 	  		if (clientHistory.indexOf(msg.user) === -1)
 	  			client.send(JSON.stringify({request:"PIXELS PLEASE!"}));
 	  		else {
@@ -194,65 +169,71 @@ function onConnection(client) {
 	  			clientHistory[client.id] = msg.user;
 	  			updateAllClients();
 	  		}
+
 	  	}
 	  	else if (msg.collection) {
+
 	  		console.log("Received fresh pixels from #"+client.id+" "+msg.owner);
 	  		client.name = msg.owner;
 	  		clientHistory[client.id] = client.name;
 	  		savePixelsToDB(client.id, msg.owner, msg.collection);
+
 	  	}
+
 	  });
+
 	  client.on('close', function() {
+
 	  	if (mediator) mediator.send(JSON.stringify({left:client.id}));
 	  	console.log('#' + client.id + " has left.");
 	  	User.remove({position:client.id}, function(error) {
 	  		if (error)
 	  			console.log(error);
-	  		// else
-	  		// 	console.log("DB entry has been removed successfully!");
 	  	});
+
 	  });
 
 	}
 
 }
 
+
+// Database operations /////////////////////////////////////////////////////////
+
 function onSavedToMongoDB(error) {
 	if (!error) {
 		//console.log("DATA SUCCESSFULLY STORED IN DATABASE");
-		User.find(updateInventory);
+		User.find(function (error, items) {
+			if (!error)
+				clients = items;
+			else console.log(error);
+		});
 	}
 	else
 		console.log(error);
 }
 
-function updateInventory(error, items) {
-	if (!error)
-		clients = items;
-	else console.log(error);
+function onIncomingStream(message) {
+	//console.log(message);
+	var pixels = JSON.parse(message);
+	if (pixels) {
+		/*console.log("RECEIVED [" 
+			+ pixels[0].step 
+			+ ".png] " 
+			+ ( pixels.length * 4 ) 
+			+ " Bytes");*/
+		var pixel;
+		for (var i = 0; i < pixels.length; i++) {
+			pixel = new Pixel(pixels[i]);
+			pixel.save(function(err, pixel) {
+				if (err)
+					console.log(err);
+				//else
+					//console.log("PIXEL SAVED TO DB");
+			});
+		};
+	}
 }
-
-// function onIncomingStream(message) {
-// 	//console.log(message);
-// 	var pixels = JSON.parse(message);
-// 	if (pixels) {
-// 		/*console.log("RECEIVED [" 
-// 			+ pixels[0].step 
-// 			+ ".png] " 
-// 			+ ( pixels.length * 4 ) 
-// 			+ " Bytes");*/
-// 		var pixel;
-// 		for (var i = 0; i < pixels.length; i++) {
-// 			pixel = new Pixel(pixels[i]);
-// 			pixel.save(function(err, pixel) {
-// 				if (err)
-// 					console.log(err);
-// 				//else
-// 					//console.log("PIXEL SAVED TO DB");
-// 			});
-// 		};
-// 	}
-// }
 
 function savePixelsToDB(clientID, clientName, pixels) {
 	var pixel;
