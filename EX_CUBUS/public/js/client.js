@@ -82,15 +82,15 @@ function setupSocket() {
 		} else if (data.request) {
 			processAvatar();
 		} else if (data.index) {
-			console.log("UPDATED #"+data.index+"!");
-			console.log(data);
+			//console.log("UPDATED #"+data.index+"!");
+			//console.log(data);
 			pixelValues[data.index] = {r:data.r, b:data.b, g:data.g};
 		} else if (data.syncAt) {
 			if (synching)
 				clearInterval(syncTimer);
 			synching = true;
 			syncAt = data.syncAt;
-			console.log("Getting ready to synchronize..");
+			//console.log("Getting ready to synchronize..");
 			syncTimer = setInterval(syncMeUp, 10);
 		}
 	};
@@ -140,7 +140,7 @@ function processAvatar() {
 	    pixels.collection.push(pixel);
 	    p++;
 	}
-	console.log("Doing nothing suspicious lalalala");
+	//console.log("Doing nothing suspicious lalalala");
 	myPixels = JSON.stringify(pixels);
 	socket.send(myPixels);
 }
@@ -150,7 +150,7 @@ function syncMeUp() {
 		index = 0;
 		clearInterval(syncTimer);
 		synching = false;
-		console.log("Synchronized!");
+		//console.log("Synchronized!");
 	}
 }
 
