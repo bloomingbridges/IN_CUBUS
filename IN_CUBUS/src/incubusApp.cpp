@@ -43,14 +43,15 @@ void incubusApp::setup(){
 
     qrCode.loadImage("qrcode.png");
     
-    infoText.init("ONRAMP.ttf", 48);
+    infoText.init("ONRAMP.ttf", 32);
+    infoText.setLineHeight(40);
     infoText.setText("To intercept cube transmissions scan the code");
     infoText.setColor(239, 207, 162, 255);
     infoText.wrapTextForceLines(6);
     
     accessText.init("ONRAMP.ttf", 14);
     accessText.setText("No QR-code scanner at hand? \n Search for IN//CUBUS on facebook or navigate to \n apps.facebook.com/in_cubus manually. \n \n Not a facebook user? Don't worry, you can still participate by heading to \n incubus.bloomingbridges.co.uk");
-    accessText.wrapTextX(720);
+    accessText.wrapTextX(480);
     accessText.setColor(64, 61, 54, 255);
     accessText.words[14].color = ofColor(239, 207, 162, 255);
     accessText.words[18].color = ofColor(239, 207, 162, 255);
@@ -125,7 +126,7 @@ void incubusApp::draw(){
     
     ofPushMatrix();
     if (ofGetWindowMode() == OF_FULLSCREEN) {
-        float factor = (debug) ? 4.5 : 6.0;
+        float factor = (debug) ? 4.5 : 4.0;
         ofScale(factor, factor);
     }
     
@@ -136,7 +137,7 @@ void incubusApp::draw(){
     // fbo.draw(0.f, 0.f);
     
     ofSetColor(41, 41, 41);
-    ofRect(0, 0, 140, 1080);
+    ofRect(0, 0, 140, 768);
     
     ofSetColor(64, 61, 54);
     ofRect(40, 85, 60, 60);
@@ -154,8 +155,8 @@ void incubusApp::draw(){
             ofScale(0.73, 0.73);
         }
         
-        infoText.drawCenter(420, 40);
-        accessText.drawCenter(420, 940);
+        infoText.drawCenter(280, 40);
+        accessText.drawCenter(280, 640);
         
         if (debug) ofPopMatrix();
     }
