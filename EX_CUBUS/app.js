@@ -24,8 +24,8 @@ var WIDTH = HEIGHT = 50;
 var app = express()
 	, server = http.createServer(app)
 	, credentials = {}
-  , clients = []
-  , clientHistory = makeHistory()
+	, clients = []
+	, clientHistory = makeHistory()
 	, socket
 	, mediator
 	, flushTimer = null
@@ -368,8 +368,8 @@ function retrievePixel(owner, position, index) {
 				deferred.reject(new Error("Couldn't fetch pixel.. :<"));
 			}
 			else {
-				//console.log("I FOUND THIS ONE");
-				//console.log(pixel);\
+				console.log("I FOUND THIS ONE");
+				console.log(pixel);
 				//pixelObj = pixel.toObject();
 				var pixelObj = {
 					index: index,
@@ -396,7 +396,7 @@ function grabPixelArrayForClient(client) {
 		}
 	}
 	
-	Q.allResolved(promises).then(function(promises) { 
+	Q.allSettled(promises).then(function(promises) { 
 
 		promises.forEach(function (promise) {
         if (promise.isFulfilled()) {
@@ -421,8 +421,11 @@ function updateAllClients() {
 
 function syncUpAllClients(seconds) {
 	var time = new Date().getUTCSeconds() + seconds;
+	var s;
 	for (var i = socket.clients.length - 1; i >= 0; i--) {
-		socket.clients[i].send(JSON.stringify({syncAt:time}));
+		s = socket.clients[i];
+		if (s !== null)
+			socket.clients[i].send(JSON.stringify({syncAt:time}));
 	}
 }
 
