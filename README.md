@@ -1,6 +1,6 @@
 # IN//CUBUS
 
-This repository holds the source code to my graduation project in __BA (Hons.) Digital Art & Technology__. [More info](https://incubus.bloomingbridges.co.uk/about)
+This repository holds the source code to my graduation project in __BA (Hons.) Digital Art & Technology__. [More info](https://www.facebook.com/pages/Florian-Brueckners-In-Cubus/658150170877070)
 
 It is made up of several components:
 
